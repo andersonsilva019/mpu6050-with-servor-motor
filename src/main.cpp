@@ -1,8 +1,8 @@
-#include "pwm.h"
+#include "../inc/pwm.hpp"
 
 int main()
 {
-  // CONFIG-PIN P9.22 pwm
+ /*  // CONFIG-PIN P9.22 pwm
   system("config-pin P9.22 pwm");
   set_pwm_period_p9_22("20000000");
   set_pwm_enable_p9_22("1");
@@ -25,5 +25,5 @@ int main()
     usleep(1000000);
   }
 
-  return (0);
+  return (0); */
 }

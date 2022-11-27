@@ -1,5 +1,5 @@
-#include "servo.hpp"
-#include "pwm.hpp"
+#include "../inc/servo.hpp"
+#include "../inc/pwm.hpp"
 
 Servo::Servo(int period, string path) {
   this->period = period;
