@@ -1,13 +1,19 @@
 all: app
 
-app: main.o pwm.o
-	arm-linux-gnueabihf-gcc obj/main.o obj/pwm.o -o bin/exec
+app: main.o pwm.o servo.o common.o
+	arm-linux-gnueabihf-g++ obj/main.o obj/pwm.o obj/common.o obj/servo.o -o bin/exec
 
-main.o: src/main.c
-	arm-linux-gnueabihf-gcc --static -c src/main.c -Iinc -o obj/main.o
+main.o: src/main.cpp
+	arm-linux-gnueabihf-g++ --static -c src/main.cpp -Iinc -o obj/main.o
 
-pwm.o: src/pwm.c
-	arm-linux-gnueabihf-gcc --static -c src/pwm.c -Iinc -o obj/pwm.o
+pwm.o: src/pwm.cpp
+	arm-linux-gnueabihf-g++ --static -c src/pwm.cpp -Iinc -o obj/pwm.o
+
+servo.o: src/servo.cpp
+	arm-linux-gnueabihf-g++ --static -c src/servo.cpp -Iinc -o obj/servo.o
+
+common.o: src/common.cpp
+	arm-linux-gnueabihf-g++ --static -c src/common.cpp -Iinc -o obj/common.o
 
 run: 
 	./bin/exec

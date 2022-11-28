@@ -33,7 +33,7 @@ Pwm::Pwm(PwmId pwmOutput) {
      }
 }
 
-Pwm::Pwm(PwmId pwmOutput, long period, long dutyCycle, bool enabledStatus = true) : Pwm(pwmOutput) {
+Pwm::Pwm(PwmId pwmOutput, long period, long dutyCycle, bool enabledStatus) : Pwm(pwmOutput) {
      this->setPeriod(period);
      this->setDutyCycle(dutyCycle);
      this->setEnabledStatus(enabledStatus);

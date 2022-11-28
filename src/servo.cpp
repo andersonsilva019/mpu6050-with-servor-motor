@@ -8,7 +8,7 @@
 #define SERVO_DUTY_CYCLE_0_DEGREE       500'000
 #define SERVO_DUTY_CYCLE_180_DEGREE     2'500'000
 
-Servo::Servo(PwmId pwmOutput, float angle = 0, bool enabledStatus = true) : pwmChannel(pwmOutput) {
+Servo::Servo(PwmId pwmOutput, float angle, bool enabledStatus) : pwmChannel(pwmOutput) {
      this->pwmChannel.setPeriod(SERVO_PERIOD_NS);
      this->setAngle(angle);
      this->pwmChannel.setEnabledStatus(enabledStatus);
