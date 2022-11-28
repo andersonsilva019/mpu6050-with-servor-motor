@@ -1,54 +1,43 @@
-#include "../inc/servo.hpp"
-#include "../inc/pwm.hpp"
+#include "servo.hpp"
 
-Servo::Servo(int period, string path) {
-  this->period = period;
-  this->pwm_path = path;
+#include "common.hpp"
+
+#define SERVO_PERIOD_NS                 20'000'000
+#define SERVO_MINIMUM_DEGREE            0
+#define SERVO_MAXIMUM_DEGREE            180
+#define SERVO_DUTY_CYCLE_0_DEGREE       500'000
+#define SERVO_DUTY_CYCLE_180_DEGREE     2'500'000
+
+Servo::Servo(PwmId pwmOutput, float angle = 0, bool enabledStatus = true) : pwmChannel(pwmOutput) {
+     this->pwmChannel.setPeriod(SERVO_PERIOD_NS);
+     this->setAngle(angle);
+     this->pwmChannel.setEnabledStatus(enabledStatus);
 }
 
-Servo::~Servo() {
-  this->disable();
+Servo::~Servo(void) {
+
 }
 
-void Servo::init(){
-  // falta o config pin system("config-pin P9.22 pwm");
-  set_pwm_duty(to_string(this->duty_cycle).c_str(), strcat((char *) this->pwm_path.c_str(), "/duty_cycle"));
-  set_pwm_period(to_string(this->period).c_str(), strcat((char *) this->pwm_path.c_str(), "/period"));
-  set_pwm_enable("1", strcat((char *) this->pwm_path.c_str(), "/enable"));
+/* Setters */
+void Servo::setAngle(float angle) {
+     if(angle > SERVO_MAXIMUM_DEGREE || angle < SERVO_MINIMUM_DEGREE) {
+          return;
+     }
+     this->currentAngle = angle;
+	long servoDutyCycle = map(angle, SERVO_MINIMUM_DEGREE, SERVO_MAXIMUM_DEGREE, SERVO_DUTY_CYCLE_0_DEGREE, SERVO_DUTY_CYCLE_180_DEGREE);
+     this->pwmChannel.setDutyCycle(servoDutyCycle);
 }
 
-void Servo::set_angle(float angle){
-  this->current_angle = angle;
-  this->duty_cycle = ((angle * 2000000) / 180) + 500000;
-  this->set_duty_cycle(this->duty_cycle);
+void Servo::setEnabledStatus(bool enableStatus) {
+     this->pwmChannel.setEnabledStatus(enableStatus);
 }
 
-void Servo::set_duty_cycle(int duty_cycle){
-  this->duty_cycle = duty_cycle;
-  set_pwm_duty(to_string(this->duty_cycle).c_str(), strcat((char *) this->pwm_path.c_str(), "/duty_cycle"));
+
+/* Getters */
+float Servo::getAngle(void) {
+     return this->currentAngle;
 }
 
-void Servo::set_period(int period){
-  this->period = period;
-  set_pwm_period(to_string(this->period).c_str(), strcat((char *) this->pwm_path.c_str(), "/period"));
-}
-
-int Servo::get_duty_cycle(){
-  return this->duty_cycle;
-}
-
-int Servo::get_period(){
-  return this->period;
-}
-
-float Servo::get_angle(){
-  return this->current_angle;
-}
-
-void Servo::enable(){
-  set_pwm_enable("1", strcat((char *) this->pwm_path.c_str(), "/enable"));
-}
-
-void Servo::disable(){
-  set_pwm_enable("0", strcat((char *) this->pwm_path.c_str(), "/enable"));
+bool Servo::getEnabledStatus(void) {
+     return this->pwmChannel.getEnabledStatus();
 }

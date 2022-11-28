@@ -1,29 +1,22 @@
-#include "../inc/pwm.hpp"
+#include "pwm.hpp"
+#include "servo.hpp"
 
-int main()
-{
- /*  // CONFIG-PIN P9.22 pwm
-  system("config-pin P9.22 pwm");
-  set_pwm_period_p9_22("20000000");
-  set_pwm_enable_p9_22("1");
+int main() {
+     /* One-by-one */
+     Pwm pwm01_0 = Pwm(kPWM1_CHANNEL_0);
+     pwm01_0.setPeriod(20'000'000);
+     pwm01_0.setDutyCycle(500'000);
+     pwm01_0.setEnabledStatus(true);
 
-  while (1)
-  {
-    // Set 90 step (RIGHT)
-    set_pwm_duty_p9_22("600000");
+     /* All-at-once */
+     Pwm pwm01_1 = Pwm(kPWM1_CHANNEL_1, 20'000'000, 2'500'000);
 
-    usleep(1000000);
+     /* Zero angle */
+     Servo rotationServo = Servo(kPWM3_CHANNEL_0);
+     Servo elevationServo = Servo(kPWM3_CHANNEL_1, 0, false);
+     elevationServo.setEnabledStatus(true);
 
-    // Set 0 step (middle)
-    set_pwm_duty_p9_22("1500000");
-
-    usleep(1000000);
-
-    // Set 180 (-90) step (LEFT)
-    set_pwm_duty_p9_22("2600000");
-
-    usleep(1000000);
-  }
-
-  return (0); */
+     /* Other's angles */
+     Servo lungeServo = Servo(kPWM6_CHANNEL_0, 90);
+     Servo clawServo = Servo(kPWM6_CHANNEL_1, 180);
 }
