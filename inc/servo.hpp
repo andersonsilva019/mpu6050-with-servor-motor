@@ -1,26 +1,23 @@
-#include <iostream>
-#include <string.h>
+#pragma once
 
-using std::string;
-using std::to_string;
+#include <iostream>
+
+#include "pwm.hpp"
 
 class Servo {
-  private:
-    float current_angle;
-    int duty_cycle;
-    int period;
-    string pwm_path;
-    
-  public: 
-    Servo(int period, string path);
-    ~Servo();
-    void init();
-    void enable();
-    void disable();
-    void set_angle(float angle);
-    void set_duty_cycle(int duty_cycle);
-    void set_period(int period);
-    int get_duty_cycle();
-    int get_period();
-    float get_angle();
+     private:
+          Pwm pwmChannel;
+          float currentAngle;
+     public:
+          /* Constructors/Destructor */ 
+          Servo(PwmId pwmOutput, float angle = 0, bool enabledStatus = true);
+          ~Servo(void);
+
+          /* Setters */
+          void setAngle(float angle);
+          void setEnabledStatus(bool enableStatus);
+
+          /* Getters */
+          float getAngle(void);
+          bool getEnabledStatus(void);
 };

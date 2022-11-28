@@ -1,9 +1,34 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#pragma once
 
-void set_pwm_period(const char *period, const char *path);
+#include <string>
 
-void set_pwm_duty(const char *duty, const char *path);
+enum PwmId {
+     kPWM1_CHANNEL_0,
+     kPWM1_CHANNEL_1,
+     kPWM3_CHANNEL_0,
+     kPWM3_CHANNEL_1,
+     kPWM6_CHANNEL_0,
+     kPWM6_CHANNEL_1
+};
 
-void set_pwm_enable(const char *enable, const char *path);
+class Pwm {
+     private:
+          PwmId pwmOutput;
+          std::string pwmPath;
+     public:
+          /* Constructors/Destructor */ 
+          Pwm(PwmId pwmOutput);
+          Pwm(PwmId pwmOutput, long period, long dutyCycle, bool enabledStatus = true);
+          ~Pwm(void);
+
+          /* Setters */
+          void setEnabledStatus(bool enabledStatus);
+          void setPeriod(long period); 
+          void setDutyCycle(long dutyCycle);
+
+          /* Getters */
+          bool getEnabledStatus(void);
+          long getPeriod(void); 
+          long getDutyCycle(void);
+          PwmId getOutputChannel(void);
+};
