@@ -1,7 +1,8 @@
 all: app
+	scp bin/exec debian@192.168.6.2:/home/debian
 
 app: main.o pwm.o servo.o common.o
-	arm-linux-gnueabihf-g++ obj/main.o obj/pwm.o obj/common.o obj/servo.o -o bin/exec
+	arm-linux-gnueabihf-g++ --static obj/main.o obj/pwm.o obj/common.o obj/servo.o -o bin/exec
 
 main.o: src/main.cpp
 	arm-linux-gnueabihf-g++ --static -c src/main.cpp -Iinc -o obj/main.o

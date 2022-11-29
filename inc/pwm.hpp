@@ -5,10 +5,10 @@
 enum PwmId {
      kPWM1_CHANNEL_0,
      kPWM1_CHANNEL_1,
-     kPWM3_CHANNEL_0,
-     kPWM3_CHANNEL_1,
-     kPWM6_CHANNEL_0,
-     kPWM6_CHANNEL_1
+     kPWM4_CHANNEL_0,
+     kPWM4_CHANNEL_1,
+     kPWM7_CHANNEL_0,
+     kPWM7_CHANNEL_1
 };
 
 class Pwm {
@@ -25,6 +25,7 @@ class Pwm {
           void setEnabledStatus(bool enabledStatus);
           void setPeriod(long period); 
           void setDutyCycle(long dutyCycle);
+          /* setDutyCycle(float percentage) */
 
           /* Getters */
           bool getEnabledStatus(void);
