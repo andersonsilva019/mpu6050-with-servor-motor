@@ -1,8 +1,13 @@
-#include "MPU6050.hpp"
+#include "accelerometer.hpp"
 
 int main() {
-     MPU6050 mpu;
-     std::cout << mpu.testConnection();
-     std::cout << mpu.init();
-     while(1);
+     Accelerometer acc;
+     std::cout << acc.testConnection() << std::endl;
+     std::cout << acc.init() << std::endl;
+
+     Acceleration_t accValues;
+     while(1) {
+          acc.getAcceleration(&accValues);
+          std::cout << "X: " << accValues.x << std::endl;
+     }
 }
