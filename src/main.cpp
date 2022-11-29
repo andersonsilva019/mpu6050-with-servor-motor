@@ -1,12 +1,8 @@
-#include "pwm.hpp"
-#include "servo.hpp"
-
-#include <unistd.h>
+#include "MPU6050.hpp"
 
 int main() {
-     /* Zero angle */
-     Servo elevationServo = Servo(kPWM1_CHANNEL_0, 180, false);
-     elevationServo.setEnabledStatus(true);
-
+     MPU6050 mpu;
+     std::cout << mpu.testConnection();
+     std::cout << mpu.init();
      while(1);
 }
