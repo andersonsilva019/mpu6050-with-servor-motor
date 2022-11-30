@@ -22,11 +22,14 @@ void I2C::writeI2C(uint8_t registerAddress, uint8_t data) {
     if (result != 2) {
         printf("Error: Could not write to I2C device at address %x\n", this->deviceAddress); 
     }
+    close(i2cFile);
 }
 
 void I2C::writeBitI2C(uint8_t registerAddress, uint8_t bitNum, uint8_t data) {
     uint8_t b = readByteI2C(registerAddress);
+    printf("b: %d\n", b);
     b = (data != 0) ? (b | (1 << bitNum)) : (b & ~(1 << bitNum));
+    printf("b_after: %d\n", b);
     writeI2C(registerAddress, b);
 }
 
@@ -49,6 +52,7 @@ void I2C::readI2C(uint8_t registerAddress, uint8_t* data, uint8_t length) {
     if (read(i2cFile, data, length) != length) {
         printf("Error: Could not read from I2C device at address %x\n", this->deviceAddress); 
     }
+    close(i2cFile);
 }
 
 uint8_t I2C::readByteI2C(uint8_t registerAddress) {
