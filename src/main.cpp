@@ -1,12 +1,13 @@
-#include "pwm.hpp"
-#include "servo.hpp"
-
-#include <unistd.h>
+#include "accelerometer.hpp"
 
 int main() {
-     /* Zero angle */
-     Servo elevationServo = Servo(kPWM1_CHANNEL_0, 180, false);
-     elevationServo.setEnabledStatus(true);
+     Accelerometer acc;
+     std::cout << acc.testConnection() << std::endl;
+     std::cout << acc.init() << std::endl;
 
-     while(1);
+     Acceleration_t accValues;
+     while(1) {
+          acc.getAcceleration(&accValues);
+          std::cout << "X: " << accValues.x << std::endl;
+     }
 }
