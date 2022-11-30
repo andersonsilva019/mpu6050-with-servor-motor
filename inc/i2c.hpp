@@ -23,12 +23,12 @@ public:
     void writeI2C(uint8_t registerAddress, uint8_t data);
     void writeBitI2C(uint8_t registerAddress, uint8_t bitNum, uint8_t data);
     // TO IMPLEMENT
-    // void writeBitsI2C(uint8_t registerAddress, uint8_t data, uint8_t length, uint8_t startBit);
+    void writeBitsI2C(uint8_t registerAddress, uint8_t data, uint8_t length, uint8_t startBit);
 
     void readI2C(uint8_t registerAddress, uint8_t* data, uint8_t length);
     uint8_t readBitI2C(uint8_t registerAddress, uint8_t bitNum);
     // TO IMPLEMENT
-    // uint8_t readBitsI2C(uint8_t registerAddress, uint8_t startBit, uint8_t length);
+    uint8_t readBitsI2C(uint8_t registerAddress, uint8_t startBit, uint8_t length);
     uint8_t readByteI2C(uint8_t registerAddress);
     uint16_t readWordI2C(uint8_t registerAddress);
 };

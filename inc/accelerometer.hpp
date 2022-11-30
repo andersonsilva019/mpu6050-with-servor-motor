@@ -24,6 +24,10 @@ public:
     Accelerometer();
     Accelerometer(std::string bus);
     void getAcceleration(Acceleration_t *acceleration);
+    // TO IMPLEMENT
+    float getAccelerationX();
+    float getAccelerationY();
+    float getAccelerationZ();
     
     bool init(void);
     bool testConnection(void);
