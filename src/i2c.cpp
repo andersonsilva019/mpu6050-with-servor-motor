@@ -69,6 +69,24 @@ void I2C::readI2C(uint8_t registerAddress, uint8_t* data, uint8_t length) {
     close(i2cFile);
 }
 
+uint8_t I2C::readBitI2C(uint8_t registerAddress, uint8_t bitNum) {
+    uint8_t b = readByteI2C(registerAddress);
+    return (b >> bitNum) & 0x01;
+}
+
+uint8_t I2C::readBitsI2C(uint8_t registerAddress, uint8_t length, uint8_t startBit) {
+    int8_t temp = readByteI2C(registerAddress);
+    if ((length + startBit) > 8){
+        std::cout << "Error: readBitsI2C cannot read more than 8 bits" << std::endl;
+        exit(1);
+    }
+    else if(length == 8){
+        return temp;
+    }
+    return (temp >> startBit) & 0xFF;
+}
+
+
 uint8_t I2C::readByteI2C(uint8_t registerAddress) {
     uint8_t data;
     readI2C(registerAddress, &data, sizeof(data));
