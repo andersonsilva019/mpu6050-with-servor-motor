@@ -86,15 +86,30 @@ uint8_t Accelerometer::getDeviceID(void) {
 
 void Accelerometer::readAccelRaw(AccelerationRAW_t *accelRaw) {
     uint8_t buffer[6];
-    i2c.readI2C(MPU6050_ACCEL_XOUT_H, buffer, 6);
+    i2c.readI2C(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
     accelRaw->x = (int16_t)((buffer[0] << 8) | buffer[1]);
     accelRaw->y = (int16_t)((buffer[2] << 8) | buffer[3]);
     accelRaw->z = (int16_t)((buffer[4] << 8) | buffer[5]);
 }
 
 void Accelerometer::getAcceleration(Acceleration_t *acceleration) {
-    readAccelRaw(&accelRaw);
-    acceleration->x = (float)(accelRaw.x / ACC_SCALE);
-    acceleration->y = (float)(accelRaw.y / ACC_SCALE);
-    acceleration->z = (float)(accelRaw.z / ACC_SCALE);
+    readAccelRaw(&this->accelRaw);
+    acceleration->x = (float)(this->accelRaw.x / ACC_SCALE);
+    acceleration->y = (float)(this->accelRaw.y / ACC_SCALE);
+    acceleration->z = (float)(this->accelRaw.z / ACC_SCALE);
+}
+
+float Accelerometer::getAccelerationX(void) {
+    getAcceleration(&this->accel);
+    return (float)(this->accel.x);
+}
+
+float Accelerometer::getAccelerationY(void) {
+    getAcceleration(&this->accel);
+    return (float)(this->accel.y);
+}
+
+float Accelerometer::getAccelerationZ(void) {
+    getAcceleration(&this->accel);
+    return (float)(this->accel.z);
 }

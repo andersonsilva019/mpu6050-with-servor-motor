@@ -9,9 +9,9 @@
 #define SERVO_DUTY_CYCLE_180_DEGREE     2'500'000
 
 Servo::Servo(PwmId pwmOutput, float angle, bool enabledStatus) : pwmChannel(pwmOutput) {
-     this->pwmChannel.setPeriod(SERVO_PERIOD_NS);
-     this->setAngle(angle);
-     this->pwmChannel.setEnabledStatus(enabledStatus);
+    this->pwmChannel.setPeriod(SERVO_PERIOD_NS);
+    this->setAngle(angle);
+    this->pwmChannel.setEnabledStatus(enabledStatus);
 }
 
 Servo::~Servo(void) {
@@ -20,24 +20,24 @@ Servo::~Servo(void) {
 
 /* Setters */
 void Servo::setAngle(float angle) {
-     if(angle > SERVO_MAXIMUM_DEGREE || angle < SERVO_MINIMUM_DEGREE) {
-          return;
-     }
-     this->currentAngle = angle;
-	long servoDutyCycle = map(angle, SERVO_MINIMUM_DEGREE, SERVO_MAXIMUM_DEGREE, SERVO_DUTY_CYCLE_0_DEGREE, SERVO_DUTY_CYCLE_180_DEGREE);
-     this->pwmChannel.setDutyCycle(servoDutyCycle);
+    if (angle > SERVO_MAXIMUM_DEGREE || angle < SERVO_MINIMUM_DEGREE) {
+        return;
+    }
+    this->currentAngle = angle;
+    long servoDutyCycle = map(angle, SERVO_MINIMUM_DEGREE, SERVO_MAXIMUM_DEGREE, SERVO_DUTY_CYCLE_0_DEGREE, SERVO_DUTY_CYCLE_180_DEGREE);
+    this->pwmChannel.setDutyCycle(servoDutyCycle);
 }
 
 void Servo::setEnabledStatus(bool enableStatus) {
-     this->pwmChannel.setEnabledStatus(enableStatus);
+    this->pwmChannel.setEnabledStatus(enableStatus);
 }
 
 
 /* Getters */
 float Servo::getAngle(void) {
-     return this->currentAngle;
+    return this->currentAngle;
 }
 
 bool Servo::getEnabledStatus(void) {
-     return this->pwmChannel.getEnabledStatus();
+    return this->pwmChannel.getEnabledStatus();
 }

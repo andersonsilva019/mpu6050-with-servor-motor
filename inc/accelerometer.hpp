@@ -18,17 +18,18 @@ class Accelerometer {
 private:
     I2C i2c;
     AccelerationRAW_t accelRaw;
-    void readAccelRaw(AccelerationRAW_t *accelRaw);
+    Acceleration_t accel;
+    void readAccelRaw(AccelerationRAW_t* accelRaw);
 
 public:
     Accelerometer();
     Accelerometer(std::string bus);
-    void getAcceleration(Acceleration_t *acceleration);
-    // TO IMPLEMENT
+    void getAcceleration(Acceleration_t* acceleration);
+    
     float getAccelerationX();
     float getAccelerationY();
     float getAccelerationZ();
-    
+
     bool init(void);
     bool testConnection(void);
 
