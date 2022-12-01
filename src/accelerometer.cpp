@@ -18,19 +18,26 @@
     #define AFS_SEL             (int)(0x03)
 #endif
 
-#define MPU6050_ACCEL_CONFIG    (int)(0x1C)
+#define MPU6050_ACCEL_CONFIG        (int)(0x1C)
+#define MPU6050_ACCEL_CONFIG_BIT    (int)(0x03)
+#define MPU6050_ACCEL_CONFIG_LENGTH (int)(0x02)
 
-#define MPU6050_ACCEL_XOUT_H    (int)(0x3B)
-#define MPU6050_ACCEL_XOUT_L    (int)(0x3C)
+#define MPU6050_ACCEL_XOUT_H        (int)(0x3B)
+#define MPU6050_ACCEL_XOUT_L        (int)(0x3C)
 
-#define MPU6050_ACCEL_YOUT_H    (int)(0x3D)
-#define MPU6050_ACCEL_YOUT_L    (int)(0x3E)
+#define MPU6050_ACCEL_YOUT_H        (int)(0x3D)
+#define MPU6050_ACCEL_YOUT_L        (int)(0x3E)
 
-#define MPU6050_ACCEL_ZOUT_H    (int)(0x3F)
-#define MPU6050_ACCEL_ZOUT_L    (int)(0x40)
+#define MPU6050_ACCEL_ZOUT_H        (int)(0x3F)
+#define MPU6050_ACCEL_ZOUT_L        (int)(0x40)
 
-#define MPU6050_PWR_MGMT_1      (int)(0x6B)
-#define MPU6050_WHO_AM_I        (int)(0x75)
+#define MPU6050_PWR_MGMT_1          (int)(0x6B)
+#define MPU6050_SLEEP_BIT           (int)(0x06)
+#define MPU6050_SLEEP_LENGTH        (int)(0x01)
+
+#define MPU6050_WHO_AM_I            (int)(0x75)
+#define MPU6050_WHO_AM_I_BIT        (int)(0x01)
+#define MPU6050_WHO_AM_I_LENGTH     (int)(0x06)
 
 Accelerometer::Accelerometer() : Accelerometer(I2C_LINUX_BUS2) {}
 
@@ -50,16 +57,15 @@ bool Accelerometer::testConnection(void) {
 }
 
 void Accelerometer::setSleepEnabled(bool enabled) {
-    i2c.writeBitI2C(MPU6050_PWR_MGMT_1, enabled, 6);
+    i2c.writeBitI2C(MPU6050_PWR_MGMT_1, enabled, MPU6050_SLEEP_BIT);
 }
 
 void Accelerometer::setFullScaleAccelRange(uint8_t range) {
-    i2c.writeBitsI2C(MPU6050_ACCEL_CONFIG, range, 2, 3);
+    i2c.writeBitsI2C(MPU6050_ACCEL_CONFIG, range, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
 }
 
 uint8_t Accelerometer::getFullScaleAccelRange(void) {
-    uint8_t temp = i2c.readByteI2C(MPU6050_ACCEL_CONFIG);
-    temp = (temp >> 3) & 0b11;
+    uint8_t temp = i2c.readBitsI2C(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
     switch(temp) {
         case 0:
             return 2;
@@ -75,7 +81,7 @@ uint8_t Accelerometer::getFullScaleAccelRange(void) {
 }
 
 uint8_t Accelerometer::getDeviceID(void) {
-    return i2c.readByteI2C(MPU6050_WHO_AM_I) >> 1;
+    return i2c.readBitsI2C(MPU6050_WHO_AM_I, MPU6050_WHO_AM_I_LENGTH, MPU6050_WHO_AM_I_BIT);
 }
 
 void Accelerometer::readAccelRaw(AccelerationRAW_t *accelRaw) {
