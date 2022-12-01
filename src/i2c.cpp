@@ -25,11 +25,25 @@ void I2C::writeI2C(uint8_t registerAddress, uint8_t data) {
     close(i2cFile);
 }
 
-void I2C::writeBitI2C(uint8_t registerAddress, uint8_t bitNum, uint8_t data) {
+void I2C::writeBitI2C(uint8_t registerAddress, uint8_t data, uint8_t bitNum) {
     uint8_t b = readByteI2C(registerAddress);
-    printf("b: %d\n", b);
     b = (data != 0) ? (b | (1 << bitNum)) : (b & ~(1 << bitNum));
-    printf("b_after: %d\n", b);
+    writeI2C(registerAddress, b);
+}
+
+void I2C::writeBitsI2C(uint8_t registerAddress, uint8_t data, uint8_t length, uint8_t startBit) {
+    int8_t b = readByteI2C(registerAddress);
+    uint8_t bits = 1;
+    uint8_t i = 0;
+
+    while (i < length - 1) {
+        bits = (bits << 1);
+        ++bits;
+        ++i;
+    }
+
+    b &= ~(bits << startBit);
+    b |= (data << startBit);
     writeI2C(registerAddress, b);
 }
 

@@ -2,14 +2,20 @@
 
 int main() {
      Accelerometer acc;
-     std::cout << acc.testConnection() << std::endl;
-     std::cout << acc.init() << std::endl;
-
-     printf("%d", acc.getFullScaleAccelRange());
-
-     Acceleration_t accValues;
-     while(1) {
-          acc.getAcceleration(&accValues);
-          std::cout << "X: " << accValues.x << std::endl;
+     if (!acc.testConnection()) {
+          std::cout << "Connection failed" << std::endl;
      }
+
+     if(!acc.init()) {
+          std::cout << "Init failed" << std::endl;
+     }
+     std::cout << "Device ID: 0x" << std::hex << (int)acc.getDeviceID() << std::endl;
+     std::cout << (int)acc.getFullScaleAccelRange() << std::endl;
+     printf("%d\n", acc.getFullScaleAccelRange());
+
+     // Acceleration_t accValues;
+     // while(1) {
+     //      acc.getAcceleration(&accValues);
+     //      std::cout << "X: " << accValues.x << std::endl;
+     // }
 }

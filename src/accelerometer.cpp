@@ -6,12 +6,16 @@
 
 #if ACC_FULLSCALE == 2
     #define ACC_SCALE           (float)(16384.0)
+    #define AFS_SEL             (int)(0x00)
 #elif ACC_FULLSCALE == 4
     #define ACC_SCALE           (float)(8192.0)
+    #define AFS_SEL             (int)(0x01)
 #elif ACC_FULLSCALE == 8
     #define ACC_SCALE           (float)(4096.0)
+    #define AFS_SEL             (int)(0x02)
 #elif ACC_FULLSCALE == 16
     #define ACC_SCALE           (float)(2048.0)
+    #define AFS_SEL             (int)(0x03)
 #endif
 
 #define MPU6050_ACCEL_CONFIG    (int)(0x1C)
@@ -35,7 +39,7 @@ Accelerometer::Accelerometer(std::string bus) : i2c(bus, MPU6050_ADDRESS) {}
 bool Accelerometer::init(void) {
     if (testConnection()) {
         setSleepEnabled(false);
-        setFullScaleAccelRange(ACC_FULLSCALE);
+        setFullScaleAccelRange(AFS_SEL);
         return true;
     }
     return false;
@@ -46,34 +50,16 @@ bool Accelerometer::testConnection(void) {
 }
 
 void Accelerometer::setSleepEnabled(bool enabled) {
-    i2c.writeBitI2C(MPU6050_PWR_MGMT_1, 6, enabled);
+    i2c.writeBitI2C(MPU6050_PWR_MGMT_1, enabled, 6);
 }
 
 void Accelerometer::setFullScaleAccelRange(uint8_t range) {
-    //usar writeBitsI2C sem switch case
-    switch(range) {
-        case 2:
-            i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, 0x00);
-            break;
-        case 4:
-            i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, 0x01);
-            break;
-        case 8:
-            i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, 0x10);
-            break;
-        case 16:
-            i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, 0x11);
-            break;
-        default:
-            i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, 0x00);
-            break;
-    }
-    // i2c.writeBitI2C(MPU6050_ACCEL_CONFIG, 4, range);
+    i2c.writeBitsI2C(MPU6050_ACCEL_CONFIG, range, 2, 3);
 }
 
 uint8_t Accelerometer::getFullScaleAccelRange(void) {
     uint8_t temp = i2c.readByteI2C(MPU6050_ACCEL_CONFIG);
-    temp = (temp >> 3) & 0x03;
+    temp = (temp >> 3) & 0b11;
     switch(temp) {
         case 0:
             return 2;
@@ -86,7 +72,6 @@ uint8_t Accelerometer::getFullScaleAccelRange(void) {
         default:
             return 0;
     }
-    // return i2c.readByteI2C(MPU6050_ACCEL_CONFIG);
 }
 
 uint8_t Accelerometer::getDeviceID(void) {

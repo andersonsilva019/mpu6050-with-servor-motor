@@ -21,7 +21,7 @@ private:
 public:
     I2C(std::string bus, uint8_t deviceAddress);
     void writeI2C(uint8_t registerAddress, uint8_t data);
-    void writeBitI2C(uint8_t registerAddress, uint8_t bitNum, uint8_t data);
+    void writeBitI2C(uint8_t registerAddress, uint8_t data, uint8_t bitNum);
     // TO IMPLEMENT
     void writeBitsI2C(uint8_t registerAddress, uint8_t data, uint8_t length, uint8_t startBit);
 
