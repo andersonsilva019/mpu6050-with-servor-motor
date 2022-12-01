@@ -17,5 +17,7 @@ int main() {
      // while(1) {
      //      acc.getAcceleration(&accValues);
      //      std::cout << "X: " << accValues.x << std::endl;
+     //      std::cout << "Y: " << accValues.y << std::endl;
+     //      std::cout << "Z: " << accValues.z << std::endl;
      // }
 }
