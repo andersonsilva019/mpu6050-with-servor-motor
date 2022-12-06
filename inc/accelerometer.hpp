@@ -19,12 +19,12 @@ private:
     I2C i2c;
     AccelerationRAW_t accelRaw;
     Acceleration_t accel;
-    void readAccelRaw(AccelerationRAW_t* accelRaw);
 
 public:
     Accelerometer(void);
     Accelerometer(std::string bus);
     void getAcceleration(Acceleration_t* acceleration);
+    void readAccelRaw(AccelerationRAW_t* accelRaw);
     
     float getAccelerationX(void);
     float getAccelerationY(void);

@@ -23,8 +23,9 @@ int main(void) {
           return 0;
      }
 
-     Acceleration_t accelerationAxis = {};
-     
+     //Acceleration_t accelerationAxis = {};
+     AccelerationRAW_t accelerationAxis = {};
+
      float angleX = 0;
      float angleY = 0;
 
@@ -32,13 +33,16 @@ int main(void) {
      float previousAngleY = 0;
 
      while (true) {
-          powerGlove.getAcceleration(&accelerationAxis);
+          /*powerGlove.getAcceleration(&accelerationAxis);
 
           previousAngleX = angleX;
           previousAngleY = angleY;
 
           angleX = atan(powerGlove.getAccelerationY()/powerGlove.getAccelerationZ())*RADIAN_TO_DEGREE;
-          angleY = atan(powerGlove.getAccelerationX()/powerGlove.getAccelerationZ())*RADIAN_TO_DEGREE;
+          angleY = atan(powerGlove.getAccelerationX()/powerGlove.getAccelerationZ())*RADIAN_TO_DEGREE;*/
+
+          powerGlove.readAccelRaw(&accelerationAxis);
+          std::cout << "X: " << accelerationAxis.x << " Y: " << accelerationAxis.y << " Z: " << accelerationAxis.z << std::endl;
 
           // OK
           // angleX = 87
@@ -58,7 +62,7 @@ int main(void) {
           
           // if((previousAngleX < 89 && angleX > previousAngleX) || (previousAngleX > 1 && angleX > previousAngleX)) {  }
           
-          bool superiorSemiCycle = true;
+          /*bool superiorSemiCycle = true;
 
           if((previousAngleX < 0 && angleX > 0) || (previousAngleX > 0 && angleX < 0)) {
                superiorSemiCycle = !superiorSemiCycle;
@@ -75,7 +79,7 @@ int main(void) {
           printf("\033[H\033[J");
           // printf("-> ANGLE Z: %.2f\n", angleZ);
           printf("-> ANGLE X: %.2f\n", angleX);
-          printf("-> ANGLE Y: %.2f\n", angleY);
+          printf("-> ANGLE Y: %.2f\n", angleY);*/
 
           /*
           powerGlove.getAcceleration(&accelerationAxis);
