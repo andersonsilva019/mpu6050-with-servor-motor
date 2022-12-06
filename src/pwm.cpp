@@ -13,6 +13,7 @@ Pwm::Pwm(PwmId pwmOutput) {
 
     /* Path Setting */
     this->pwmPath = "/sys/class/pwm/pwmchip";
+    std::string configPinString = "";
     switch (pwmOutput) {
     case kPWM1_CHANNEL_0:
         this->pwmPath += "1/pwm-1:0/";
@@ -56,9 +57,6 @@ void Pwm::setEnabledStatus(bool enabledStatus) {
     std::fstream pwmEnableFile;
     pwmEnableFile.open(this->pwmPath + "enable", std::ios::out);
     if (pwmEnableFile) {
-
-        std::cout << "echo " << std::to_string(enabledStatus) << " >> " << this->pwmPath << "enable" << std::endl;
-
         pwmEnableFile << std::to_string(enabledStatus);
         pwmEnableFile.close();
     }
@@ -68,9 +66,6 @@ void Pwm::setPeriod(long period) {
     std::fstream pwmPeriodFile;
     pwmPeriodFile.open(this->pwmPath + "period", std::ios::out);
     if (pwmPeriodFile) {
-
-        std::cout << "echo " << std::to_string(period) << " >> " << this->pwmPath << "period" << std::endl;
-
         pwmPeriodFile << std::to_string(period);
         pwmPeriodFile.close();
     }
@@ -80,14 +75,18 @@ void Pwm::setDutyCycle(long dutyCycle) {
     std::fstream pwmDutyCycleFile;
     pwmDutyCycleFile.open(this->pwmPath + "duty_cycle", std::ios::out);
     if (pwmDutyCycleFile) {
-
-        std::cout << "echo " << std::to_string(dutyCycle) << " >> " << this->pwmPath << "duty_cycle" << std::endl;
-
         pwmDutyCycleFile << std::to_string(dutyCycle);
         pwmDutyCycleFile.close();
     }
 }
 
+void Pwm::setDutyCyclePercentage(float percentage) {
+    if(percentage < 0.01 && percentage > 100.0) {
+        return;
+    }
+    long dutyCycle = (long) percentage*this->getPeriod();
+    this->setDutyCycle(dutyCycle);
+}
 
 /* Getters */
 bool Pwm::getEnabledStatus(void) {
@@ -121,6 +120,10 @@ long Pwm::getDutyCycle(void) {
         pwmEnableFile.close();
     }
     return returnDutyCyle;
+}
+
+float Pwm::getDutyCyclePercentage(void) {
+    return (this->getDutyCycle()/this->getPeriod())*100.0;
 }
 
 PwmId Pwm::getOutputChannel(void) {

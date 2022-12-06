@@ -22,13 +22,13 @@ private:
     void readAccelRaw(AccelerationRAW_t* accelRaw);
 
 public:
-    Accelerometer();
+    Accelerometer(void);
     Accelerometer(std::string bus);
     void getAcceleration(Acceleration_t* acceleration);
     
-    float getAccelerationX();
-    float getAccelerationY();
-    float getAccelerationZ();
+    float getAccelerationX(void);
+    float getAccelerationY(void);
+    float getAccelerationZ(void);
 
     bool init(void);
     bool testConnection(void);

@@ -16,20 +16,16 @@ private:
     PwmId pwmOutput;
     std::string pwmPath;
 public:
-    /* Constructors/Destructor */
     Pwm(PwmId pwmOutput);
     Pwm(PwmId pwmOutput, long period, long dutyCycle, bool enabledStatus = true);
     ~Pwm(void);
-
-    /* Setters */
     void setEnabledStatus(bool enabledStatus);
     void setPeriod(long period);
     void setDutyCycle(long dutyCycle);
-    /* setDutyCycle(float percentage) */
-
-    /* Getters */
+    void setDutyCyclePercentage(float percentage);
     bool getEnabledStatus(void);
     long getPeriod(void);
     long getDutyCycle(void);
+    float getDutyCyclePercentage(void);
     PwmId getOutputChannel(void);
 };
