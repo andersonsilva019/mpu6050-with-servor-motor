@@ -3,9 +3,9 @@
 #include "common.hpp"
 
 #define SERVO_PERIOD_NS                 20'000'000
-#define SERVO_MINIMUM_DEGREE            -90
-#define SERVO_MAXIMUM_DEGREE            90
-#define SERVO_DUTY_CYCLE_MIN_DEGREE       500'000
+#define SERVO_MINIMUM_DEGREE            0
+#define SERVO_MAXIMUM_DEGREE            180
+#define SERVO_DUTY_CYCLE_MIN_DEGREE     500'000
 #define SERVO_DUTY_CYCLE_MAX_DEGREE     2'500'000
 
 Servo::Servo(PwmId pwmOutput, float angle, bool enabledStatus) : pwmChannel(pwmOutput) {

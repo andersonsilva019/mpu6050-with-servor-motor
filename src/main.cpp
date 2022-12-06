@@ -43,7 +43,8 @@ int main(void) {
 
           powerGlove.readAccelRaw(&accelerationAxis);
           std::cout << "X: " << accelerationAxis.x << " Y: " << accelerationAxis.y << " Z: " << accelerationAxis.z << std::endl;
-
+          angleX = map(accelerationAxis.x, -17000, 17000, 0, 180);
+          roboticArm.setElevation(angleX);
           // OK
           // angleX = 87
           // previousAngleX = 84
