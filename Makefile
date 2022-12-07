@@ -1,8 +1,8 @@
 all: app
 	scp bin/exec debian@192.168.7.2:/home/debian
 
-app: main.o pwm.o servo.o common.o accelerometer.o i2c.o roboticarm.o
-	arm-linux-gnueabihf-g++ --static obj/main.o obj/pwm.o obj/common.o obj/servo.o obj/i2c.o obj/accelerometer.o obj/roboticarm.o -o bin/exec
+app: main.o pwm.o servo.o common.o accelerometer.o i2c.o roboticarm.o gpio.o
+	arm-linux-gnueabihf-g++ --static obj/main.o obj/pwm.o obj/common.o obj/servo.o obj/i2c.o obj/accelerometer.o obj/roboticarm.o obj/gpio.o -o bin/exec
 
 main.o: src/main.cpp
 	arm-linux-gnueabihf-g++ --static -c src/main.cpp -Iinc -o obj/main.o
@@ -25,6 +25,8 @@ accelerometer.o: src/accelerometer.cpp
 roboticarm.o: src/roboticarm.cpp
 	arm-linux-gnueabihf-g++ --static -c src/roboticarm.cpp -Iinc -o obj/roboticarm.o
 
+gpio.o: src/gpio.cpp
+	arm-linux-gnueabihf-g++ --static -c src/gpio.cpp -Iinc -o obj/gpio.o
 run: 
 	./bin/exec
 
