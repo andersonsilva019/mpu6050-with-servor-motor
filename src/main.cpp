@@ -60,9 +60,9 @@ int main(void){
           roboticArm.setRotation(angleY);
 
           if(gpioOfButton.getValue() == "1") {
-               roboticArm.setGrip(0);
-          } else {
                roboticArm.setGrip(180);
+          } else {
+               roboticArm.setGrip(90);
           }
 
           // OK
