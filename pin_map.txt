@@ -1,4 +1,4 @@
 rotationServo:           kPWM1_CHANNEL_0     -    P9.22
-elevationServo:          kPWM1_CHANNEL_1     -    P9.21
-approximationServo:      kPWM4_CHANNEL_0     -    P9.14
+approximationServo:      kPWM1_CHANNEL_1     -    P9.14
+elevationServo:          kPWM4_CHANNEL_0     -    P9.21
 grabServo:               kPWM4_CHANNEL_1     -    P9.16

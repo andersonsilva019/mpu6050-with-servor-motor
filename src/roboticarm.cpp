@@ -1,12 +1,16 @@
 #include "roboticarm.hpp"
 
-RoboticArm::RoboticArm(void) : rotationServo(kPWM1_CHANNEL_0, 90.0), elevationServo(kPWM1_CHANNEL_1), approximationServo(kPWM4_CHANNEL_0), grabServo(kPWM4_CHANNEL_1) { }
+RoboticArm::RoboticArm(void) :
+     rotationServo(kPWM1_CHANNEL_0, 90.0),
+     approximationServo(kPWM1_CHANNEL_1),
+     elevationServo(kPWM4_CHANNEL_0),
+     grabServo(kPWM4_CHANNEL_1, 120.0) { }
 
 RoboticArm::RoboticArm(PwmId rotationServo, PwmId elevationServo, PwmId approximationServo, PwmId grabServo) : 
      rotationServo(rotationServo, 90.0),
-     elevationServo(elevationServo), 
      approximationServo(approximationServo), 
-     grabServo(grabServo) { }
+     elevationServo(elevationServo), 
+     grabServo(grabServo, 120.0) { }
 
 void RoboticArm::setRotation(float angle) {
      this->rotationServo.setAngle(angle);

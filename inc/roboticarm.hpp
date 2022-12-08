@@ -5,8 +5,8 @@
 class RoboticArm {
 private:
      Servo rotationServo;
-     Servo elevationServo;
      Servo approximationServo;
+     Servo elevationServo;
      Servo grabServo;
 public:
      RoboticArm(void);

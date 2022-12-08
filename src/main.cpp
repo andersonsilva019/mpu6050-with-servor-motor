@@ -14,15 +14,22 @@
 
 int main(void) {
      RoboticArm roboticArm = RoboticArm();
-     Accelerometer powerGlove = Accelerometer();
-     GPIO gpioOfButton = GPIO(66); //P8_7
-     gpioOfButton.setEdge("rising");
+     Accelerometer controlSensor = Accelerometer();
+     GPIO touchSensor = GPIO(66); //P8_7
+     GPIO startLed = GPIO(67); //P8_8
+     GPIO touchLed = GPIO(68); //P8_10
 
-     if (!powerGlove.testConnection()) {
+     touchSensor.setDirection("in");
+     touchSensor.setEdge("rising");
+
+     startLed.setDirection("out");
+     touchLed.setDirection("out");
+
+     if (!controlSensor.testConnection()) {
           std::cerr << "error: Accelerometer connection failed." << std::endl;
           return 0;
      }
-     if (!powerGlove.init()) {
+     if (!controlSensor.init()) {
           std::cerr << "error: Accelerometer init failed." << std::endl;
           return 0;
      }
@@ -35,22 +42,23 @@ int main(void) {
 
      float previousAngleX = 0;
      float previousAngleY = 0;
+     startLed.setValue(1);
 
      while (true) {
+          controlSensor.readAccelRaw(&accelerationAxis);
+          // std::cout << "X: " << accelerationAxis.x << " Y: " << accelerationAxis.y << std::endl;
+          angleX = map(accelerationAxis.y, -17000, 17000, 180, 0);
+          angleY = map(accelerationAxis.x, -17000, 17000, 0, 180);
 
-          powerGlove.readAccelRaw(&accelerationAxis);
-          //std::cout << "X: " << accelerationAxis.x << " Y: " << accelerationAxis.y << std::endl;
-          angleX = map(accelerationAxis.x, -17000, 17000, 180, 0);
-          angleY = map(accelerationAxis.y, -17000, 17000, 0, 180);
-
-          roboticArm.setElevation(angleX);
-
+          roboticArm.setApproximation(angleX);
           roboticArm.setRotation(angleY);
 
-          if (gpioOfButton.getValue()) {
+          if (touchSensor.getValue()) {
+               touchLed.setValue(1);
                roboticArm.setGrip(180);
           }
           else {
+               touchLed.setValue(0);
                roboticArm.setGrip(120);
           }
      }

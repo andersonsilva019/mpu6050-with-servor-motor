@@ -9,7 +9,7 @@ public:
     GPIO(int gpioNumber);
     std::string getGpioPath();
     void setDirection(std::string direction);
-    void setValue(std::string value);
+    void setValue(int value);
     void setEdge(std::string edge);
     std::string getDirection(void);
     int getValue(void);

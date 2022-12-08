@@ -19,11 +19,12 @@ void GPIO::setDirection(std::string direction){
   }
 }
 
-void GPIO::setValue(std::string value){
+void GPIO::setValue(int value){
+  std::string valueString = std::to_string(value);
   std::fstream gpioValueFile;
   gpioValueFile.open(this->gpioPath + "value", std::ios::out);
   if (gpioValueFile) {
-    gpioValueFile << value;
+    gpioValueFile << valueString;
     gpioValueFile.close();
   }
 }
