@@ -10,6 +10,8 @@ public:
     std::string getGpioPath();
     void setDirection(std::string direction);
     void setValue(std::string value);
+    void setEdge(std::string edge);
     std::string getDirection(void);
-    std::string getValue(void);
+    int getValue(void);
+
 };

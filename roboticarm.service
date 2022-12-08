@@ -1,0 +1,18 @@
+[Unit]
+Description=Serviço para controlar o braço robótico
+
+[Service]
+User=root
+WorkingDirectory=/home/debian/
+ExecStart=./robotic
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# mv /lib/systemd/system/roboticarm.service
+# sudo systemctl daemon-reload --> reinicia os arquivos de serviços para incluir o novo
+# sudo systemctl start roboticarm.service --> iniciar o serviço
+# sudo systemctl enable roboticarm.service --> para habilitar o serviço em cada reboot da placa
+# sudo systemctl status roboticarm.service --> checar os estados do serviço
+# systemctl é gerenciado pelo system5 -->

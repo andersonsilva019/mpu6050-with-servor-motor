@@ -1,4 +1,4 @@
-#include <gpio.hpp>
+#include "gpio.hpp"
 
 #define GPIO_PATH "/sys/class/gpio/gpio"
 
@@ -28,6 +28,15 @@ void GPIO::setValue(std::string value){
   }
 }
 
+void GPIO::setEdge(std::string edge){
+  std::fstream gpioEdgeFile;
+  gpioEdgeFile.open(this->gpioPath + "edge", std::ios::out);
+  if (gpioEdgeFile) {
+    gpioEdgeFile << edge;
+    gpioEdgeFile.close();
+  }
+}
+
 std::string GPIO::getDirection(void){
   std::fstream gpioDirectionFile;
   std::string direction;
@@ -39,7 +48,7 @@ std::string GPIO::getDirection(void){
   return direction;
 }
 
-std::string GPIO::getValue(void){
+int GPIO::getValue(void){
   std::fstream gpioValueFile;
   std::string value;
   gpioValueFile.open(this->gpioPath + "value", std::ios::in);
@@ -47,5 +56,5 @@ std::string GPIO::getValue(void){
     gpioValueFile >> value;
     gpioValueFile.close();
   }
-  return value;
+  return atoi(value.c_str());
 }
