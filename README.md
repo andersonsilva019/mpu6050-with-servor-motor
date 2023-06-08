@@ -1,4 +1,4 @@
-# Projeto Braço Robótico 🤖
+#Projeto Braço Robótico 🤖
 
 Projeto final da disciplina de "Técnicas de Programação de Sistemas Embarcados II", ou TPSE II, ministrada pelo professor Francisco Hélder Cândido (FHC), na Universidade Federal do Ceará (UFC), campus de Quixadá, apresentado no dia 08 de dezembro de 2022.
 
@@ -26,85 +26,102 @@ O código foi implementado em C++, para o sistema operacional Linux, embarcado �
 Servo nome = Servo(<canal>, <angulo>, <habilitado>);
 ```
 
-Para inicializar um motor de rotação no canal 1 do PWM3, com ângulo de 0º e habilitado por padrão, faz-se:
+    Para inicializar um motor de rotação no canal 1 do PWM3,
+    com ângulo de 0º e habilitado por padrão,
+    faz - se :
 
-```c++
-Servo rotationServo = Servo(kPWM3_CHANNEL_1);
+```c++ Servo rotationServo = Servo(kPWM3_CHANNEL_1);
 ```
 
-Para configurar um ângulo deve-se informar um valor no método setAngle().
+    Para configurar um ângulo deve -
+    se informar um valor no método setAngle()
+        .
 
-```c++
-elevationServo.setAngle(<angulo>);
+```c++ elevationServo.setAngle(<angulo>);
 ```
 
-Por exemplo, para configurar um ângulo de 60º no motor de elevação:
+    Por exemplo,
+    para configurar um ângulo de 60º no motor de elevação :
 
-```c++
-elevationServo.setAngle(60);
-```
-  
-Vale lembrar que esta classe se utiliza da classe PWM.
-  
-## Classe Accelerometer
-
-Podemos inicializar o I2C passando o barramento desejado para o construtor, ou apenas chamar o construtor padrão, que irá definir o barramento I2C-2. Após isso a função de inicialização deve ser chamada:
-
-```c++
-Accelerometer sensor = Accelerometer();
-if(!sensor.init()) { ... }
+```c++ elevationServo.setAngle(60);
 ```
 
-Para obter os dados devemos criar uma estrutura do tipo AccelerationRAW_t, onde guardaremos os valores de aceleração, que podemos ler usando a seguinte função:
+    Vale lembrar que esta classe se utiliza da classe PWM.
 
-```c++
-AccelerationRAW_t accelerationAxis;
+    ##Classe Accelerometer
+
+        Podemos inicializar o I2C passando o barramento desejado para o
+            construtor,
+    ou apenas chamar o construtor padrão,
+    que irá definir o barramento I2C -
+        2. Após isso a função de inicialização deve ser chamada :
+
+```c++ Accelerometer sensor = Accelerometer();
+if (!sensor.init()) {
+  ...
+}
+```
+
+    Para obter os dados devemos criar uma estrutura do tipo AccelerationRAW_t,
+    onde guardaremos os valores de aceleração,
+    que podemos ler usando a seguinte função :
+
+```c++ AccelerationRAW_t accelerationAxis;
 sensor.readAccelRaw(&accelerationAxis);
 ```
 
-A partir desses valores salvos na struct, que vão de -17000 a +17000, podemos obter a angulação ou/e transcrever um ângulo no servo motor, da seguinte forma: 
+    A partir desses valores salvos na struct,
+    que vão de - 17000 a + 17000,
+    podemos obter a angulação ou / e transcrever um ângulo no servo motor,
+    da seguinte forma : 
 
-```c++
-int angleY = map(accelerationAxis.x, -17000, 17000, 180, 0);
+```c++ int angleY = map(accelerationAxis.x, -17000, 17000, 180, 0);
 ```
 
-## Classe GPIO
+    ##Classe GPIO
 
-Para inicializar um pino como GPIO primeiro deve-se passa o número da GPIO para o construtor:
+        Para inicializar um pino como GPIO primeiro deve -
+    se passa o número da GPIO para o construtor :
 
-```c++
-GPIO nome = GPIO(<numero>);
+```c++ GPIO nome = GPIO(<numero>);
 ```
 
-Após isso devemos definir a direção, como uma string "in" ou "out", usando a seguinte função:
+    Após isso devemos definir a direção,
+    como uma string "in" ou "out",
+    usando a seguinte função :
 
-```c++
-touchSensor.setDirection(<direcao>);
+```c++ touchSensor.setDirection(<direcao>);
 ```
 
-Podemos então usar o pino como GPIO, ou seja, entrada ou saída:
+    Podemos então usar o pino como GPIO,
+    ou seja,
+    entrada ou saída :
 
-```c++
-bool touchSensorLevel = touchSensor.getValue();
+```c++ bool touchSensorLevel = touchSensor.getValue();
 touchLed.setValue(touchLedLevel);
 ```
 
-Dessa forma podemos usar a classe GPIO para controlar o sensor de toque capacitivo e os LEDs.
+    Dessa forma podemos usar a classe GPIO para controlar o sensor de toque
+        capacitivo e os
+            LEDs.
 
-## Classe RoboticArm
+    ##Classe RoboticArm
 
-Essa classe encapsula quatro motores servo. Podemos inicializar essa classe com o construtor padrão facilmente (irá definir os canais do PWM padrões), apenas chamando:
+        Essa classe encapsula quatro motores servo.Podemos inicializar essa
+            classe com o construtor padrão
+            facilmente(irá definir os canais do PWM padrões),
+    apenas chamando :
 
-```c++
-RoboticArm roboticArm = RoboticArm();
+```c++ RoboticArm roboticArm = RoboticArm();
 ```
 
-Podemos tambem passar os canais desejados para o construtor, caso seja necessário.
+    Podemos tambem passar os canais desejados para o construtor,
+    caso seja necessário.
 
-Teremos então quatro motores a nossa disposição, com funções para cada um:
+    Teremos então quatro motores a nossa disposição,
+    com funções para cada um :
 
-```c++
-roboticArm.setRotation(<angle>);
+```c++ roboticArm.setRotation(<angle>);
 roboticArm.setElevation(<angle>);
 roboticArm.setApproximation(<angle>);
 roboticArm.setGrip(<angle>);
