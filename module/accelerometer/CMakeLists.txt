@@ -21,3 +21,7 @@ set_target_properties(${project_name} PROPERTIES
 )
 
 target_include_directories(${project_name} PUBLIC ${robarm_dir})
+
+target_link_libraries(${project_name} LINK_PUBLIC
+    robarm_hal_i2c
+)

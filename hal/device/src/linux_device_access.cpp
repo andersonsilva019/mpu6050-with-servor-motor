@@ -4,6 +4,7 @@
 #include "hal/device/include/linux_device_access.hpp"
 
 #include <fstream>
+#include <iostream>
 
 #include "hal/device/include/linux_device_exception.hpp"
 #include "utils/common/include/common.hpp"

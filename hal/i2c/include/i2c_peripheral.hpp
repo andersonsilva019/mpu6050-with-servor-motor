@@ -4,6 +4,7 @@
 #ifndef HAL_I2C_INCLUDE_I2C_PERIPHERAL_HPP_
 #define HAL_I2C_INCLUDE_I2C_PERIPHERAL_HPP_
 
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 

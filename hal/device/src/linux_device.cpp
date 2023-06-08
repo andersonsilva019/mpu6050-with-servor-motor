@@ -4,4 +4,4 @@
 #include "hal/device/include/linux_device.hpp"
 
 robarm::hal::device::LinuxDevice::LinuxDevice(std::string const& path) noexcept
-    : path_(path + "/") {}
+    : path_(path) {}

@@ -4,50 +4,39 @@
 #ifndef MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 #define MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 
+#include <cstdint>
+
 #include "hal/i2c/include/i2c_component.hpp"
 
-struct AccelerationRAW_t {
-    int16_t x;
-    int16_t y;
-    int16_t z;
-};
-
-struct Acceleration_t {
-    float x;
-    float y;
-    float z;
-};
 
 namespace robarm {
 namespace module {
 namespace accelerometer {
 
+struct AxisAcceleration {
+    int16_t x;
+    int16_t y;
+    int16_t z;
+};
+
 class Accelerometer : protected hal::i2c::I2C_Component {
-private:
-    //robarm::hal::i2c::I2C_Component i2c_;
-    AccelerationRAW_t accelRaw_;
-    Acceleration_t accel_;
-
 public:
-    Accelerometer();
     explicit Accelerometer(hal::i2c::I2C_Bus bus);
-    ~Accelerometer();
-    void getAcceleration(Acceleration_t* acceleration);
-    void readAccelRaw(AccelerationRAW_t* accelRaw);
-    
-    float getAccelerationX();
-    float getAccelerationY();
-    float getAccelerationZ();
-
-    bool init();
-    bool testConnection();
-
-    void setSleepEnabled(bool enabled);
-
-    void setFullScaleAccelRange(uint8_t range);
-    uint8_t getFullScaleAccelRange();
+    ~Accelerometer() = default;
 
     uint8_t getDeviceID();
+    uint8_t getFullScaleAccelRange();
+    AxisAcceleration const& getAcceleration();
+    bool isConnected();
+    void setFullScaleAccelRange(uint8_t range);
+    void sleep();
+    void wakeup();
+
+private:
+    void readAxisAcceleration();
+
+private:
+    AxisAcceleration acceleration_;
 };
 
 } // namespace accelerometer

@@ -11,7 +11,7 @@ namespace robarm {
 namespace utils {
 namespace common {
 
-uint32_t map(uint32_t value, uint32_t in_min, uint32_t in_max, uint32_t out_min,
+uint32_t map(double value, double in_min, double in_max, uint32_t out_min,
              uint32_t out_max) noexcept;
 
 std::string format(const char* fmt, ...) noexcept;

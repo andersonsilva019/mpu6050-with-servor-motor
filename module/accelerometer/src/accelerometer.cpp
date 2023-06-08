@@ -4,6 +4,8 @@
 #include "module/accelerometer/include/accelerometer.hpp"
 
 #include "hal/i2c/include/i2c_component.hpp"
+#include "hal/i2c/include/i2c_peripheral_exception.hpp"
+
 
 #define ACC_FULLSCALE  2
 
@@ -23,57 +25,55 @@ constexpr float ACC_SCALE = 2048.0;
 constexpr int AFS_SEL = 0x03;
 #endif
 
-constexpr int MPU6050_ACCEL_CONFIG = 0x1C;
-constexpr int MPU6050_ACCEL_CONFIG_BIT = 0x03;
-constexpr int MPU6050_ACCEL_CONFIG_LENGTH = 0x02;
+constexpr int kAccelerometerRegister_CONFIG = 0x1C;
+constexpr int kAccelerometerRegister_CONFIG_BIT = 0x03;
+constexpr int kAccelerometerRegister_CONFIG_LENGTH = 0x02;
 
-constexpr int MPU6050_ACCEL_XOUT_H = 0x3B;
-constexpr int MPU6050_ACCEL_XOUT_L = 0x3C;
+constexpr int kAccelerometerRegister_XOUT_H = 0x3B;
+constexpr int kAccelerometerRegister_XOUT_L = 0x3C;
 
-constexpr int MPU6050_ACCEL_YOUT_H = 0x3D;
-constexpr int MPU6050_ACCEL_YOUT_L = 0x3E;
+constexpr int kAccelerometerRegister_YOUT_H = 0x3D;
+constexpr int kAccelerometerRegister_YOUT_L = 0x3E;
 
-constexpr int MPU6050_ACCEL_ZOUT_H = 0x3;
-constexpr int MPU6050_ACCEL_ZOUT_L = 0x40;
+constexpr int kAccelerometerRegister_ZOUT_H = 0x3;
+constexpr int kAccelerometerRegister_ZOUT_L = 0x40;
 
-constexpr int MPU6050_PWR_MGMT_1 = 0x6B;
-constexpr int MPU6050_SLEEP_BIT = 0x06;
-constexpr int MPU6050_SLEEP_LENGTH = 0x01;
+constexpr int kAccelerometerRegister_PWR_MGMT_1 = 0x6B;
+constexpr int kAccelerometerRegister_SLEEP_BIT = 0x06;
+constexpr int kAccelerometerRegister_SLEEP_LENGTH = 0x01;
 
-constexpr int MPU6050_WHO_AM_I = 0x75;
-constexpr int MPU6050_WHO_AM_I_BIT = 0x01;
-constexpr int MPU6050_WHO_AM_I_LENGTH = 0x06;
-
-robarm::module::accelerometer::Accelerometer::Accelerometer() : Accelerometer(hal::i2c::I2C_Bus::kBus2) {}
+constexpr int kAccelerometerRegister_DEVICE_ID = 0b110100;
+constexpr int kAccelerometerRegister_WHO_AM_I = 0x75;
+constexpr int kAccelerometerRegister_WHO_AM_I_BIT = 0x01;
+constexpr int kAccelerometerRegister_WHO_AM_I_LENGTH = 0x06;
 
 robarm::module::accelerometer::Accelerometer::Accelerometer(hal::i2c::I2C_Bus bus) :
-    I2C_Component(bus, MPU6050_ADDRESS) {}
-
-robarm::module::accelerometer::Accelerometer::~Accelerometer() {}
-
-bool robarm::module::accelerometer::Accelerometer::init() {
-    if (testConnection()) {
-        setSleepEnabled(false);
-        setFullScaleAccelRange(AFS_SEL);
-        return true;
+    I2C_Component(bus, MPU6050_ADDRESS) {
+    if (!isConnected()) {
+        //throw hal::i2c::I2C_PeripheralException("Accelerometer not connected.");
     }
-    return false;
+    wakeup();
+    setFullScaleAccelRange(AFS_SEL);
 }
 
-bool robarm::module::accelerometer::Accelerometer::testConnection() {
-    return ((getDeviceID() == 0b110100) ? true : false);
+bool robarm::module::accelerometer::Accelerometer::isConnected() {
+    return ((getDeviceID() == kAccelerometerRegister_DEVICE_ID) ? true : false);
 }
 
-void robarm::module::accelerometer::Accelerometer::setSleepEnabled(bool enabled) {
-    writeBit(MPU6050_PWR_MGMT_1, enabled, MPU6050_SLEEP_BIT);
+void robarm::module::accelerometer::Accelerometer::wakeup() {
+    writeBit(kAccelerometerRegister_PWR_MGMT_1, false, kAccelerometerRegister_SLEEP_BIT);
+}
+
+void robarm::module::accelerometer::Accelerometer::sleep() {
+    writeBit(kAccelerometerRegister_PWR_MGMT_1, true, kAccelerometerRegister_SLEEP_BIT);
 }
 
 void robarm::module::accelerometer::Accelerometer::setFullScaleAccelRange(uint8_t range) {
-    writeBits(MPU6050_ACCEL_CONFIG, range, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
+    writeBits(kAccelerometerRegister_CONFIG, range, kAccelerometerRegister_CONFIG_LENGTH, kAccelerometerRegister_CONFIG_BIT);
 }
 
 uint8_t robarm::module::accelerometer::Accelerometer::getFullScaleAccelRange() {
-    uint8_t temp = readBits(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
+    uint8_t temp = readBits(kAccelerometerRegister_CONFIG, kAccelerometerRegister_CONFIG_LENGTH, kAccelerometerRegister_CONFIG_BIT);
     switch (temp) {
     case 0:
         return 2;
@@ -89,35 +89,29 @@ uint8_t robarm::module::accelerometer::Accelerometer::getFullScaleAccelRange() {
 }
 
 uint8_t robarm::module::accelerometer::Accelerometer::getDeviceID() {
-    return readBits(MPU6050_WHO_AM_I, MPU6050_WHO_AM_I_LENGTH, MPU6050_WHO_AM_I_BIT);
+    return readBits(kAccelerometerRegister_WHO_AM_I, kAccelerometerRegister_WHO_AM_I_LENGTH, kAccelerometerRegister_WHO_AM_I_BIT);
 }
 
-void robarm::module::accelerometer::Accelerometer::readAccelRaw(AccelerationRAW_t* accelRaw) {
+// void robarm::module::accelerometer::Accelerometer::readAccelRaw(AccelerationRAW_t* accelRaw) {
+//     uint8_t buffer[6];
+//     readBlock(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
+//     accelRaw->x = (int16_t)((buffer[0] << 8) | buffer[1]);
+//     accelRaw->y = (int16_t)((buffer[2] << 8) | buffer[3]);
+//     accelRaw->z = (int16_t)((buffer[4] << 8) | buffer[5]);
+// }
+
+void robarm::module::accelerometer::Accelerometer::readAxisAcceleration() {
     uint8_t buffer[6];
-    readBlock(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
-    accelRaw->x = (int16_t)((buffer[0] << 8) | buffer[1]);
-    accelRaw->y = (int16_t)((buffer[2] << 8) | buffer[3]);
-    accelRaw->z = (int16_t)((buffer[4] << 8) | buffer[5]);
+    readBlock(kAccelerometerRegister_XOUT_H, buffer, sizeof(buffer));
+    acceleration_.x = static_cast<int16_t>((buffer[0] << 8) | buffer[1]);
+    acceleration_.y = static_cast<int16_t>((buffer[2] << 8) | buffer[3]);
+    acceleration_.z = static_cast<int16_t>((buffer[4] << 8) | buffer[5]);
+    // acceleration_.x = (int16_t)((buffer[0] << 8) | buffer[1]);
+    // acceleration_.y = (int16_t)((buffer[2] << 8) | buffer[3]);
+    // acceleration_.z = (int16_t)((buffer[4] << 8) | buffer[5]);
 }
 
-void robarm::module::accelerometer::Accelerometer::getAcceleration(Acceleration_t* acceleration) {
-    readAccelRaw(&this->accelRaw_);
-    acceleration->x = this->accelRaw_.x / ACC_SCALE;
-    acceleration->y = this->accelRaw_.y / ACC_SCALE;
-    acceleration->z = this->accelRaw_.z / ACC_SCALE;
-}
-
-float robarm::module::accelerometer::Accelerometer::getAccelerationX() {
-    getAcceleration(&this->accel_);
-    return this->accel_.x;
-}
-
-float robarm::module::accelerometer::Accelerometer::getAccelerationY() {
-    getAcceleration(&this->accel_);
-    return this->accel_.y;
-}
-
-float robarm::module::accelerometer::Accelerometer::getAccelerationZ() {
-    getAcceleration(&this->accel_);
-    return this->accel_.z;
+robarm::module::accelerometer::AxisAcceleration const& robarm::module::accelerometer::Accelerometer::getAcceleration() {
+    readAxisAcceleration();
+    return acceleration_;
 }
