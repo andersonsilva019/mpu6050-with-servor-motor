@@ -1,5 +1,6 @@
 // Copyright (c) 2023 Robarm
 // All rights reserved
+
 #ifndef MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 #define MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 
@@ -20,15 +21,16 @@ struct Acceleration_t {
 namespace robarm {
 namespace module {
 namespace accelerometer {
-class Accelerometer {
+
+class Accelerometer : protected hal::i2c::I2C_Component {
 private:
-    robarm::hal::i2c::I2C_Component i2c_;
+    //robarm::hal::i2c::I2C_Component i2c_;
     AccelerationRAW_t accelRaw_;
     Acceleration_t accel_;
 
 public:
     Accelerometer();
-    Accelerometer(robarm::hal::i2c::I2C_Bus bus);
+    explicit Accelerometer(hal::i2c::I2C_Bus bus);
     ~Accelerometer();
     void getAcceleration(Acceleration_t* acceleration);
     void readAccelRaw(AccelerationRAW_t* accelRaw);

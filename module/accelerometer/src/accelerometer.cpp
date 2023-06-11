@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Robarm
 // All rights reserved
+
 #include "module/accelerometer/include/accelerometer.hpp"
+
 #include "hal/i2c/include/i2c_component.hpp"
 
 #define ACC_FULLSCALE  2
@@ -42,13 +44,14 @@ constexpr int MPU6050_WHO_AM_I = 0x75;
 constexpr int MPU6050_WHO_AM_I_BIT = 0x01;
 constexpr int MPU6050_WHO_AM_I_LENGTH = 0x06;
 
-robarm::module::accelerometer::Accelerometer::Accelerometer() : Accelerometer(robarm::hal::i2c::I2C_Bus::kBus2) {}
+robarm::module::accelerometer::Accelerometer::Accelerometer() : Accelerometer(hal::i2c::I2C_Bus::kBus2) {}
 
-robarm::module::accelerometer::Accelerometer::Accelerometer(robarm::hal::i2c::I2C_Bus bus) : i2c_(bus, MPU6050_ADDRESS) {}
+robarm::module::accelerometer::Accelerometer::Accelerometer(hal::i2c::I2C_Bus bus) :
+    I2C_Component(bus, MPU6050_ADDRESS) {}
 
 robarm::module::accelerometer::Accelerometer::~Accelerometer() {}
 
-bool robarm::module::accelerometer::Accelerometer::init(void) {
+bool robarm::module::accelerometer::Accelerometer::init() {
     if (testConnection()) {
         setSleepEnabled(false);
         setFullScaleAccelRange(AFS_SEL);
@@ -57,20 +60,20 @@ bool robarm::module::accelerometer::Accelerometer::init(void) {
     return false;
 }
 
-bool robarm::module::accelerometer::Accelerometer::testConnection(void) {
+bool robarm::module::accelerometer::Accelerometer::testConnection() {
     return ((getDeviceID() == 0b110100) ? true : false);
 }
 
 void robarm::module::accelerometer::Accelerometer::setSleepEnabled(bool enabled) {
-    i2c_.writeBit(MPU6050_PWR_MGMT_1, enabled, MPU6050_SLEEP_BIT);
+    writeBit(MPU6050_PWR_MGMT_1, enabled, MPU6050_SLEEP_BIT);
 }
 
 void robarm::module::accelerometer::Accelerometer::setFullScaleAccelRange(uint8_t range) {
-    i2c_.writeBits(MPU6050_ACCEL_CONFIG, range, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
+    writeBits(MPU6050_ACCEL_CONFIG, range, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
 }
 
-uint8_t robarm::module::accelerometer::Accelerometer::getFullScaleAccelRange(void) {
-    uint8_t temp = i2c_.readBits(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
+uint8_t robarm::module::accelerometer::Accelerometer::getFullScaleAccelRange() {
+    uint8_t temp = readBits(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_LENGTH, MPU6050_ACCEL_CONFIG_BIT);
     switch (temp) {
     case 0:
         return 2;
@@ -85,13 +88,13 @@ uint8_t robarm::module::accelerometer::Accelerometer::getFullScaleAccelRange(voi
     }
 }
 
-uint8_t robarm::module::accelerometer::Accelerometer::getDeviceID(void) {
-    return i2c_.readBits(MPU6050_WHO_AM_I, MPU6050_WHO_AM_I_LENGTH, MPU6050_WHO_AM_I_BIT);
+uint8_t robarm::module::accelerometer::Accelerometer::getDeviceID() {
+    return readBits(MPU6050_WHO_AM_I, MPU6050_WHO_AM_I_LENGTH, MPU6050_WHO_AM_I_BIT);
 }
 
 void robarm::module::accelerometer::Accelerometer::readAccelRaw(AccelerationRAW_t* accelRaw) {
     uint8_t buffer[6];
-    i2c_.readBlock(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
+    readBlock(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
     accelRaw->x = (int16_t)((buffer[0] << 8) | buffer[1]);
     accelRaw->y = (int16_t)((buffer[2] << 8) | buffer[3]);
     accelRaw->z = (int16_t)((buffer[4] << 8) | buffer[5]);
@@ -104,17 +107,17 @@ void robarm::module::accelerometer::Accelerometer::getAcceleration(Acceleration_
     acceleration->z = this->accelRaw_.z / ACC_SCALE;
 }
 
-float robarm::module::accelerometer::Accelerometer::getAccelerationX(void) {
+float robarm::module::accelerometer::Accelerometer::getAccelerationX() {
     getAcceleration(&this->accel_);
     return this->accel_.x;
 }
 
-float robarm::module::accelerometer::Accelerometer::getAccelerationY(void) {
+float robarm::module::accelerometer::Accelerometer::getAccelerationY() {
     getAcceleration(&this->accel_);
     return this->accel_.y;
 }
 
-float robarm::module::accelerometer::Accelerometer::getAccelerationZ(void) {
+float robarm::module::accelerometer::Accelerometer::getAccelerationZ() {
     getAcceleration(&this->accel_);
     return this->accel_.z;
 }
