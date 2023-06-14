@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <fstream>
+#include <iostream>
 
 #include "hal/device/include/linux_device_access.hpp"
 #include "hal/pwm/include/pwm_info.hpp"
@@ -21,7 +22,7 @@ robarm::hal::pwm::PWM_Component::PWM_Component(PWM_ChannelId channel,
                                                uint32_t duty_cycle,
                                                bool is_enabled)
     : channel_(channel),
-      LinuxDevice(constructPath()),
+      LinuxDevice(constructPath(channel)),
       enable_file_path_(getPath() + kPwmEnable),
       duty_cycle_file_path_(getPath() + kPwmDutyCycle) {
   setPeriod(period);
@@ -51,8 +52,8 @@ void robarm::hal::pwm::PWM_Component::setDutyCyclePercentage(float percentage) {
   setDutyCycle(duty_cycle);
 }
 
-std::string robarm::hal::pwm::PWM_Component::constructPath() const noexcept {
-  switch (channel_) {
+std::string robarm::hal::pwm::PWM_Component::constructPath(PWM_ChannelId channel) const noexcept {
+  switch (channel) {
     case PWM_ChannelId::kPwm1Channel_0: {
       PWM_Info pwm_info(1, 1, 0, 9, 22);
       return pwm_info.getDeviceFilePath();

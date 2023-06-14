@@ -1,11 +1,21 @@
+// Copyright (c) 2023 Robarm
+// All rights reserved
 
-#include "accelerometer.hpp"
-#include "roboticarm.hpp"
-#include "common.hpp"
-#include "gpio.hpp"
+#include "module/roboticarm/include/roboticarm.hpp"
 
+#include "hal/pwm/include/pwm_component.hpp"
+#include "hal/i2c/include/i2c_component.hpp"
+
+#include "module/led/include/led.hpp"
+#include "module/button/include/button.hpp"
+#include "module/accelerometer/include/accelerometer.hpp"
+
+#include "utils/common/include/common.hpp"
+
+#include <stdexcept>
 #include <iostream>
 #include <cmath>
+#include <memory>
 
 #include <unistd.h>
 
@@ -14,60 +24,47 @@
 #define RADIAN_TO_DEGREE 57.2958
 
 int main(void) {
-     RoboticArm roboticArm = RoboticArm();
-     Accelerometer controlSensor = Accelerometer();
-     GPIO touchSensor = GPIO(66); //P8_7
-     GPIO startLed = GPIO(67); //P8_8
-     GPIO touchLed = GPIO(68); //P8_10
-
-     touchSensor.setDirection("in");
-     touchSensor.setEdge("rising");
-
-     startLed.setDirection("out");
-     touchLed.setDirection("out");
-
-     if (!controlSensor.testConnection()) {
-          std::cerr << "error: Accelerometer connection failed." << std::endl;
-          return 0;
+     std::unique_ptr<robarm::module::roboticarm::RoboticArm> robotic_arm;
+     std::unique_ptr<robarm::module::accelerometer::Accelerometer> accelerometer;
+     std::unique_ptr<robarm::module::button::Button> touch_sensor;
+     std::unique_ptr<robarm::module::led::Simple_LED> start_led;
+     std::unique_ptr<robarm::module::led::Simple_LED> touch_led;
+     try {
+          robotic_arm = std::make_unique<robarm::module::roboticarm::RoboticArm>(robarm::hal::pwm::PWM_ChannelId::kPwm1Channel_0, robarm::hal::pwm::PWM_ChannelId::kPwm1Channel_1, robarm::hal::pwm::PWM_ChannelId::kPwm4Channel_0, robarm::hal::pwm::PWM_ChannelId::kPwm4Channel_1);
+          accelerometer = std::make_unique<robarm::module::accelerometer::Accelerometer>(robarm::hal::i2c::I2C_Bus::kBus2);
+          touch_sensor = std::make_unique<robarm::module::button::Button>(66);
+          start_led = std::make_unique<robarm::module::led::Simple_LED>(67, false, true);
+          touch_led = std::make_unique<robarm::module::led::Simple_LED>(68);
      }
-     if (!controlSensor.init()) {
-          std::cerr << "error: Accelerometer init failed." << std::endl;
-          return 0;
+     catch(std::exception const& e) {
+          std::cout << e.what();
+          return 1;
      }
 
-     // Acceleration_t accelerationAxis = {};
-     AccelerationRAW_t accelerationAxis = {};
-
-     float angleX = 0;
-     float angleY = 0;
-
-     float previousAngleX = 0;
-     float previousAngleY = 0;
-     startLed.setValue(1);
-
+     bool grip_returned_to_default = true;
      while (true) {
-          controlSensor.readAccelRaw(&accelerationAxis);
-          // std::cout << "X: " << accelerationAxis.x << " Y: " << accelerationAxis.y << std::endl;
-          angleX = map(accelerationAxis.y, -17000, 17000, 180, 0);
-          angleY = map(accelerationAxis.x, -17000, 17000, 0, 180);
+          try {
+               robarm::module::accelerometer::AxisAcceleration const& acceleration = accelerometer->getAcceleration();
 
-          roboticArm.setApproximation(angleX);
-          roboticArm.setRotation(angleY);
+               double x_angle = robarm::utils::common::map(acceleration.y, -17000, 17000, 180.0, 0.0);
+               double y_angle = robarm::utils::common::map(acceleration.x, -17000, 17000, 0.0, 180.0);
 
-          if (touchSensor.getValue()) {
-               touchLed.setValue(1);
-               roboticArm.setGrip(180);
+               robotic_arm->setApproximationAngle(x_angle);
+               robotic_arm->setRotationAngle(y_angle);
+
+               if (touch_sensor->isPressed()) {
+                    touch_led->turnOn();
+                    robotic_arm->setGripAngle(180);
+               }
+               else {
+                    touch_led->turnOff();
+                    robotic_arm->setGripAngle(120);
+               }
+               
           }
-          else {
-               touchLed.setValue(0);
-               roboticArm.setGrip(120);
+          catch (std::exception const& e) {
+               std::cout << e.what();
+               return 1;
           }
      }
-
-     /* 
-     std::cout << "Device ID: 0x" << std::hex << (int)acc.getDeviceID() << std::endl;
-     std::cout << (int)acc.getFullScaleAccelRange() << std::endl;
-     printf("%d\n", acc.getFullScaleAccelRange());
-     */
-     
 }

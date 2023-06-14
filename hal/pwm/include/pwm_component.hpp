@@ -42,7 +42,7 @@ class PWM_Component : protected device::LinuxDevice {
   PWM_ChannelId getChannel() const noexcept { return channel_; }
 
  private:
-  std::string constructPath() const noexcept;
+  std::string constructPath(PWM_ChannelId channel) const noexcept;
   void setOutputStatus(bool output_status);
 
  private:

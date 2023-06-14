@@ -11,8 +11,14 @@ set(sources
 
 set(robarm_executable robarm)
 
+link_libraries("-static")
+
 add_executable(${robarm_executable} ${sources})
 
 target_link_libraries(${robarm_executable} LINK_PUBLIC
+    robarm_hal_pwm
     robarm_module_led
+    robarm_module_accelerometer
+    robarm_module_button
+    robarm_module_roboticarm
 )

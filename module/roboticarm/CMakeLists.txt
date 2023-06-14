@@ -1,16 +1,16 @@
 # Copyright (c) 2023 Robarm
 # All rights reserved
 
-set(project_name robarm_module_robotic_arm)
+set(project_name robarm_module_roboticarm)
 
 set(sources_dir ${CMAKE_CURRENT_LIST_DIR}/src)
 set(headers_dir ${CMAKE_CURRENT_LIST_DIR}/include)
 
 set(sources
-    ${sources_dir}/robotic_arm.cpp
+    ${sources_dir}/roboticarm.cpp
 )
 set(headers
-    ${headers_dir}/robotic_arm.hpp
+    ${headers_dir}/roboticarm.hpp
 )
 
 add_library(${project_name} STATIC ${sources} ${headers})
@@ -21,3 +21,8 @@ set_target_properties(${project_name} PROPERTIES
 )
 
 target_include_directories(${project_name} PUBLIC ${robarm_dir})
+
+target_link_libraries(${project_name} LINK_PUBLIC
+    robarm_module_motor
+    robarm_hal_pwm
+)
