@@ -4,7 +4,7 @@
 #ifndef HAL_I2C_INCLUDE_I2C_COMPONENT_HPP_
 #define HAL_I2C_INCLUDE_I2C_COMPONENT_HPP_
 
-#include <string>
+#include <cstdint>
 
 #include "hal/device/include/linux_device.hpp"
 

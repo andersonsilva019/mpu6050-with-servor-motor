@@ -14,7 +14,7 @@ constexpr char kI2cPath[] = "/dev/i2c-";
 
 robarm::hal::i2c::I2C_Component::I2C_Component(I2C_Bus bus,
                                                uint8_t peripheral_address)
-    : LinuxDevice(kI2cPath + std::to_string(static_cast<uint32_t>(bus)) + "/"),
+    : LinuxDevice(kI2cPath + std::to_string(static_cast<uint32_t>(bus))),
       bus_(bus),
       peripheral_address_(peripheral_address) {}
 

@@ -38,7 +38,7 @@ void robarm::hal::pwm::PWM_Component::setPeriod(uint32_t period) {
 }
 
 void robarm::hal::pwm::PWM_Component::setDutyCycle(uint32_t duty_cycle) {
-  duty_cycle = duty_cycle_;
+  duty_cycle_ = duty_cycle;
   device::LinuxDeviceAccess::writeFile(duty_cycle_file_path_.c_str(),
                                        std::to_string(duty_cycle).c_str());
 }

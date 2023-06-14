@@ -6,13 +6,13 @@
 #include "utils/common/include/common.hpp"
 
 constexpr uint32_t kServoMotorPeriodNs = 20'000'000;
-constexpr uint32_t kServoMotorMinDegree = 0;
-constexpr uint32_t kServoMotorMaxDegree = 180;
+constexpr double kServoMotorMinDegree = 0.0;
+constexpr double kServoMotorMaxDegree = 180.0;
 constexpr uint32_t kServoMotorMinDutyCycle = 500'000;
 constexpr uint32_t kServoMotorMaxDutyCycle = 2'500'000;
 
 robarm::module::motor::ServoMotor::ServoMotor(
-    hal::pwm::PWM_ChannelId pwm_channel, float default_angle, bool is_enabled)
+    hal::pwm::PWM_ChannelId pwm_channel, double default_angle, bool is_enabled)
     : PWM_Component(pwm_channel, kServoMotorPeriodNs, parseAngle(default_angle),
                     is_enabled),
       current_angle_(default_angle) {
@@ -23,13 +23,13 @@ robarm::module::motor::ServoMotor::ServoMotor(
   }
 }
 
-void robarm::module::motor::ServoMotor::setAngle(float angle) {
+void robarm::module::motor::ServoMotor::setAngle(double angle) {
   current_angle_ = angle;
   setDutyCycle(parseAngle(angle));
 }
 
-uint32_t robarm::module::motor::ServoMotor::parseAngle(float angle) {
-  return utils::common::map(static_cast<uint32_t>(angle), kServoMotorMinDegree,
+uint32_t robarm::module::motor::ServoMotor::parseAngle(double angle) {
+  return utils::common::map(angle, kServoMotorMinDegree,
                             kServoMotorMaxDegree, kServoMotorMinDutyCycle,
                             kServoMotorMaxDutyCycle);
 }

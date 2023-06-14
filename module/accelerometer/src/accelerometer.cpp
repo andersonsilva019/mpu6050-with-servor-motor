@@ -4,8 +4,8 @@
 #include "module/accelerometer/include/accelerometer.hpp"
 
 #include "hal/i2c/include/i2c_component.hpp"
-
 #include "hal/i2c/include/i2c_peripheral_exception.hpp"
+
 
 #define ACC_FULLSCALE  2
 
@@ -92,14 +92,26 @@ uint8_t robarm::module::accelerometer::Accelerometer::getDeviceID() {
     return readBits(kAccelerometerRegister_WHO_AM_I, kAccelerometerRegister_WHO_AM_I_LENGTH, kAccelerometerRegister_WHO_AM_I_BIT);
 }
 
+// void robarm::module::accelerometer::Accelerometer::readAccelRaw(AccelerationRAW_t* accelRaw) {
+//     uint8_t buffer[6];
+//     readBlock(MPU6050_ACCEL_XOUT_H, buffer, sizeof(buffer));
+//     accelRaw->x = (int16_t)((buffer[0] << 8) | buffer[1]);
+//     accelRaw->y = (int16_t)((buffer[2] << 8) | buffer[3]);
+//     accelRaw->z = (int16_t)((buffer[4] << 8) | buffer[5]);
+// }
+
 void robarm::module::accelerometer::Accelerometer::readAxisAcceleration() {
     uint8_t buffer[6];
     readBlock(kAccelerometerRegister_XOUT_H, buffer, sizeof(buffer));
     acceleration_.x = static_cast<int16_t>((buffer[0] << 8) | buffer[1]);
     acceleration_.y = static_cast<int16_t>((buffer[2] << 8) | buffer[3]);
     acceleration_.z = static_cast<int16_t>((buffer[4] << 8) | buffer[5]);
+    // acceleration_.x = (int16_t)((buffer[0] << 8) | buffer[1]);
+    // acceleration_.y = (int16_t)((buffer[2] << 8) | buffer[3]);
+    // acceleration_.z = (int16_t)((buffer[4] << 8) | buffer[5]);
 }
 
 robarm::module::accelerometer::AxisAcceleration const& robarm::module::accelerometer::Accelerometer::getAcceleration() {
+    readAxisAcceleration();
     return acceleration_;
 }

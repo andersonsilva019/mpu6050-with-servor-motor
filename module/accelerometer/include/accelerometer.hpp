@@ -4,7 +4,10 @@
 #ifndef MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 #define MODULE_ACCELEROMETER_INCLUDE_ACCELEROMETER_HPP_
 
+#include <cstdint>
+
 #include "hal/i2c/include/i2c_component.hpp"
+
 
 namespace robarm {
 namespace module {
