@@ -55,6 +55,7 @@ char const* robarm::hal::gpio::GPIO_Component::parseDirection(
     case PinDirection::kIn:
       direction_string = kGpioComponentDirectionIn;
       break;
+    default:
     case PinDirection::kOut:
       direction_string = kGpioComponentDirectionOut;
       break;
@@ -66,6 +67,7 @@ char const* robarm::hal::gpio::GPIO_Component::parseInterruptEdge(
     InterruptEdge edge) const noexcept {
   char const* edge_string;
   switch (edge) {
+    default:
     case InterruptEdge::kNone:
       edge_string = kGpioComponentInterruptEdgeNone;
       break;

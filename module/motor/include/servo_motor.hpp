@@ -16,6 +16,7 @@ class ServoMotor : protected hal::pwm::PWM_Component {
  public:
   ServoMotor(hal::pwm::PWM_ChannelId pwm_channel, double default_angle = 0.0F,
              bool is_enabled = true);
+  virtual ~ServoMotor() = default;
   void enable() { enableOutput(); }
   void disable() { disableOutput(); }
   void setAngle(double angle);
@@ -23,7 +24,7 @@ class ServoMotor : protected hal::pwm::PWM_Component {
   bool isEnabled() const noexcept { return PWM_Component::isEnabled(); }
 
  private:
-  uint32_t parseAngle(double angle);
+  uint32_t parseAngle(double angle) const noexcept;
 
  private:
   double current_angle_;

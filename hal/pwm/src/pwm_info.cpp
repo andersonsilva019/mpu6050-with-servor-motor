@@ -12,8 +12,8 @@ constexpr char kPwmDevicePathFormat[] = "/sys/class/pwm/pwmchip%d/pwm-%d:%d/";
 constexpr char kPwmPinConfigFormat[] = "config-pin P%d.%d pwm";
 
 robarm::hal::pwm::PWM_Info::PWM_Info(uint32_t chip, uint32_t device,
-                                     uint32_t channel, uint32_t header,
-                                     uint32_t pin)
+                                     uint32_t channel, BoardHeader header,
+                                     uint32_t pin) noexcept
     : chip_(chip),
       device_(device),
       channel_(channel),
@@ -27,7 +27,7 @@ std::string robarm::hal::pwm::PWM_Info::getDeviceFilePath() const noexcept {
 }
 
 void robarm::hal::pwm::PWM_Info::configPinAsPwm() const noexcept {
-  std::string config_pin_string =
-      utils::common::format(kPwmPinConfigFormat, header_, pin_);
+  std::string config_pin_string = utils::common::format(
+      kPwmPinConfigFormat, static_cast<uint8_t>(header_), pin_);
   std::system(config_pin_string.c_str());
 }

@@ -3,7 +3,7 @@
 
 /**
  * Tests GPIO components, such as LEDs and buttons,
- * to ensure that everything is working properly. 
+ * to ensure that everything is working properly.
  */
 
 #include <iostream>
@@ -21,7 +21,10 @@ int main() {
     button = std::make_unique<robarm::module::button::Button>(66);
   } catch (robarm::hal::device::LinuxDeviceException const& e) {
     std::cout << e.what() << "\n";
-    return 0;
+    return 1;
+  } catch (std::exception const& e) {
+    std::cout << e.what() << "\n";
+    return 1;
   }
   while (true) {
     try {
@@ -32,7 +35,10 @@ int main() {
       }
     } catch (robarm::hal::device::LinuxDeviceException const& e) {
       std::cout << e.what() << "\n";
-      return 0;
+      return 1;
+    } catch (std::exception const& e) {
+      std::cout << e.what() << "\n";
+      return 1;
     }
   }
 }

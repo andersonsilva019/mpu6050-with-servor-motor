@@ -12,19 +12,19 @@ constexpr char kLinuxDeviceExceptionFormatStringOne[] =
 constexpr char kLinuxDeviceExceptionFormatStringTwo[] =
     "Could not access the device %s through the given path %s.";
 
-robarm::hal::device::LinuxDeviceException::LinuxDeviceException()
+robarm::hal::device::LinuxDeviceException::LinuxDeviceException() noexcept
     : message_(kLinuxDeviceExceptionDefaultString) {}
 
 robarm::hal::device::LinuxDeviceException::LinuxDeviceException(
-    char const* path)
+    char const* path) noexcept
     : message_(
           utils::common::format(kLinuxDeviceExceptionFormatStringOne, path)) {}
 
 robarm::hal::device::LinuxDeviceException::LinuxDeviceException(
-    std::string const& message)
+    std::string const& message) noexcept
     : message_(message) {}
 
 robarm::hal::device::LinuxDeviceException::LinuxDeviceException(
-    char const* device, char const* path)
+    char const* device, char const* path) noexcept
     : message_(utils::common::format(kLinuxDeviceExceptionFormatStringTwo,
                                      device, path)) {}

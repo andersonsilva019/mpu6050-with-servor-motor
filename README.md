@@ -1,8 +1,16 @@
-#Projeto Braço Robótico 🤖
+# Projeto Braço Robótico 🤖
 
-Projeto final da disciplina de "Técnicas de Programação de Sistemas Embarcados II", ou TPSE II, ministrada pelo professor Francisco Hélder Cândido (FHC), na Universidade Federal do Ceará (UFC), campus de Quixadá, apresentado no dia 08 de dezembro de 2022.
+Projeto final da disciplina de "Técnicas de Programação de Sistemas Embarcados II", ou TPSE II, ministrada pelo professor Francisco Hélder Cândido (FHC), para o curso de Engenharia de Computação, na Universidade Federal do Ceará (UFC), campus de Quixadá, apresentado no dia 08 de dezembro de 2022.
 
 O vídeo do projeto encontra-se no <a href="https://www.youtube.com/watch?v=x9LftPXqS44">YouTube</a>.
+
+## A equipe
+
+A equipe do projeto foi formada pelos seguintes integrantes:
+
+- Anderson Silva: <a href="https://www.linkedin.com/in/anderson-silva-3a3883188/">LinkedIn</a> e <a href="https://github.com/andersonsilva019">Github</a>.
+- Pedro Botelho: <a href="https://www.linkedin.com/in/pedrobotelho15/">LinkedIn</a> e <a href="https://github.com/pedrobotelho15">Github</a>.
+- Samuel Henrique: <a href="https://www.linkedin.com/in/samuelhenrique15/">LinkedIn</a> e <a href="https://github.com/SamuelLost">Github</a>.
 
 ## O projeto
 
@@ -16,113 +24,112 @@ Os sensores enviam os dados para uma EVB, a Beaglebone Black com Linux, que proc
 
 ## O software
 
-O código foi implementado em C++, para o sistema operacional Linux, embarcado à placa (dessa forma rodando à nível de processo). Cada entidade real (como os motores e os sensores) foram replicadas no código por meio de classes, de forma a organizar o código da melhor maneira possível. 
+O código foi implementado em C++17, para o sistema operacional Linux, embarcado à placa (dessa forma rodando à nível de processo). Cada entidade real (como os motores e os sensores) foram modeladas no código por meio de classes, de forma a organizar o código da melhor maneira possível.
 
-## Classe Servo
+O projeto está dividido em diretórios, de forma a separar as classes em suas funções no código. Esses diretórios são referentes a:
+
+- **HAL (Hardware Abstraction Layer)**: Ou _camada de abstração de hardware_, é onde estão as classes que realizam acesso ao hardware, como acessar um dispositivo para realizar uma escrita ou leitura. Neste diretório estão os componentes de GPIO, I2C e PWM, todos modelados de forma a serem usados como um dispositivo do Linux.
+- **Modulos**: Aqui estão os dispositivos reais do projeto modelados por meio de classes: motores servo, botões (que irá ser usado com o sensor de toque), LEDs e o sensor acelerômetro. Essas classes utilizam das classes da HAL para acessar os seus respectivos dispositivos (por meio de algum componente do hardware, como I2C e GPIO). Um módulo importante é o próprio braço robótico (classe RoboticArm), que encapsula quatro motores servo, tal como a garra real.
+- **Utilitários**: Funções usadas em vários lugares do código, como funções para mapeamento de valores e para formatação de strings.
+- **Testes**: Os componentes de hardware podem ser testados por meio das funções deste diretório, caso seja necessário (como por exemplo ao migrar para outra placa).
+
+Ainda, há uma quarta pasta: a **main**, onde está o código principal da aplicação.
+
+Além da estrutura, o código está seguindo o _code style_ da Google, bem como algumas normas internas próprias: as funções estão em **camelCase**, as classes em **PascalCase** e as variáveis em **snake_case**. Os atributos das classes tem um underline ('_') ao final.
+
+O código está, ainda, organizado em _namespaces_, baseados nessa estrutura de diretórios. O namespace mais geral é **robarm**, então teremos os namespaces do diretório da "função" da classe  (os debatidos anteriormente), são eles: **hal**, **module** e **utils**. Por fim, para discernir entre as classes de mesma função é usado um _namespace_ para o tipo de componente/dispositivo, como **gpio** ou **button**. Seguem alguns exemplos de classes:
+
+- **robarm::hal::i2c::I2C_Component**
+- **robarm::hal::pwm::PWM_Component**
+- **robarm::module::motor::ServoMotor**
+
+Os utilitários não são classes, mas sim funções:
+
+- **robarm::utils::common::map**
+- **robarm::utils::common::format**
+
+As classes seguem um modelo hierárquico, onde a classe **robarm::hal::device::LinuxDevice** é a super-classe. Vale a pena falar de algumas classes aqui:
+
+## Classe ServoMotor
   
-  Para inicializar o motor informa-se o canal, o ângulo (por padrão é 0, caso não seja informado), e o estado de habilitação do motor (por padrão é true, caso não seja informado):
+Para inicializar o motor informa-se o canal (especifica no enum **PWM_ChannelId**), o ângulo (por padrão é 0, caso não seja informado), e o estado de habilitação do motor (por padrão é true, caso não seja informado):
 
 ```c++
-Servo nome = Servo(<canal>, <angulo>, <habilitado>);
+robarm::module::motor::ServoMotor motor(<canal>, <angulo>, <habilitado>);
 ```
 
-    Para inicializar um motor de rotação no canal 1 do PWM3,
-    com ângulo de 0º e habilitado por padrão,
-    faz - se :
+Para inicializar um motor de rotação no canal 1 do PWM4, com ângulo de 0° e habilitado por padrão, faz-se :
 
-```c++ Servo rotationServo = Servo(kPWM3_CHANNEL_1);
+```c++ 
+robarm::module::motor::ServoMotor rotation_servo(robarm::hal::pwm::PWM_ChannelId::kPwm4Channel_1);
 ```
 
-    Para configurar um ângulo deve -
-    se informar um valor no método setAngle()
-        .
+Para configurar um ângulo deve-se informar um valor no método setAngle().
 
-```c++ elevationServo.setAngle(<angulo>);
+```c++ 
+elevation_servo.setAngle(<angulo>);
 ```
 
-    Por exemplo,
-    para configurar um ângulo de 60º no motor de elevação :
+Por exemplo, para configurar um ângulo de 60° no motor de elevação :
 
-```c++ elevationServo.setAngle(60);
+```c++ 
+elevation_servo.setAngle(60.0);
 ```
 
-    Vale lembrar que esta classe se utiliza da classe PWM.
+É perceptível que esta classe se utiliza da classe PWM_Component, da HAL de PWM.
 
-    ##Classe Accelerometer
+## Classe Accelerometer
 
-        Podemos inicializar o I2C passando o barramento desejado para o
-            construtor,
-    ou apenas chamar o construtor padrão,
-    que irá definir o barramento I2C -
-        2. Após isso a função de inicialização deve ser chamada :
+Podemos inicializar o Acelerômetro passando o barramento em que está conectado para o construtor. Assim que o construtor é chamado o acelerômetro é inicializado.
 
-```c++ Accelerometer sensor = Accelerometer();
-if (!sensor.init()) {
-  ...
+```c++
+robarm::module::accelerometer::Accelerometer accelerometer(robarm::hal::i2c::I2C_Bus::kBus2);
+```
+
+Obtemos os dados por meio da função **getAcceleration**, que retorna uma referência constante à uma estrutura interna da classe: AxisAcceleration, que contém os valores das acelerações nos três eixos.
+
+```c++
+robarm::module::accelerometer::AxisAcceleration const& acceleration_values = accelerometer.getAcceleration();
+```
+
+A partir desses valores obtidos na struct, que vão de -17000 a +17000, podemos obter a angulação ou/e transcrever um ângulo no servo motor, usando a função **map**: 
+
+```c++ 
+double angle_y_ = robarm::utils::common::map(acceleration_values.x, -17000, 17000, 0.0, 180.0);
+```
+
+De forma a facilitar o processo de obter o ângulo, pode-se usar a classe invólucro **robarm::module::accelerometer::AccelerometerTiltAngle**, passando um **std::shared_ptr** para um objeto Accelerometer. Dessa forma quando  for obter o ângulo apenas chamar a função **getTiltAngles**, que retorna uma referência constante para struct atributo da classe, com os ângulos já mapeados, de 0° a 180°.
+
+```c++
+robarm::module::accelerometer::TiltAngle const& angles = accelerometer_tilt_angle.getTiltAngles();
+```
+
+Por fim, vale ressaltar que caso não seja possível ler, escrever, ou acessar o dispositivo, uma exceção será lançada.
+
+## Classes Button e Simple_LED
+
+A utilização de GPIO foi bastante abstraída nesse projeto, com uma grande hierarquia de classes, usada de forma a melhor organizar o código e deixá-lo simples e conciso, apesar de maior. Para inicializar um botão ou um LED, deve-se apenas informar o número do GPIO. Pode se ainda informar se o LED é ativo em baixo (falso por padrão) e se está ligado inicialmente (também falso por padrão).
+
+```c++
+robarm::module::led::Simple_LED led(<numero>);
+robarm::module::button::Button button(<numero>);
+```
+
+Dessa forma podemos verificar se o botão foi pressionado e, por exemplo, ligar o LED:
+
+```c++ 
+if(button) {
+    led.turnOn();
 }
 ```
 
-    Para obter os dados devemos criar uma estrutura do tipo AccelerationRAW_t,
-    onde guardaremos os valores de aceleração,
-    que podemos ler usando a seguinte função :
+## Classe RoboticArm
 
-```c++ AccelerationRAW_t accelerationAxis;
-sensor.readAccelRaw(&accelerationAxis);
-```
+Essa classe encapsula quatro motores servo. Para inicializá-lo deve apenas passar os canais dos PWM conectados aos motores. Teremos então quatro motores a nossa disposição, com funções para cada um, como as que seguem:
 
-    A partir desses valores salvos na struct,
-    que vão de - 17000 a + 17000,
-    podemos obter a angulação ou / e transcrever um ângulo no servo motor,
-    da seguinte forma : 
-
-```c++ int angleY = map(accelerationAxis.x, -17000, 17000, 180, 0);
-```
-
-    ##Classe GPIO
-
-        Para inicializar um pino como GPIO primeiro deve -
-    se passa o número da GPIO para o construtor :
-
-```c++ GPIO nome = GPIO(<numero>);
-```
-
-    Após isso devemos definir a direção,
-    como uma string "in" ou "out",
-    usando a seguinte função :
-
-```c++ touchSensor.setDirection(<direcao>);
-```
-
-    Podemos então usar o pino como GPIO,
-    ou seja,
-    entrada ou saída :
-
-```c++ bool touchSensorLevel = touchSensor.getValue();
-touchLed.setValue(touchLedLevel);
-```
-
-    Dessa forma podemos usar a classe GPIO para controlar o sensor de toque
-        capacitivo e os
-            LEDs.
-
-    ##Classe RoboticArm
-
-        Essa classe encapsula quatro motores servo.Podemos inicializar essa
-            classe com o construtor padrão
-            facilmente(irá definir os canais do PWM padrões),
-    apenas chamando :
-
-```c++ RoboticArm roboticArm = RoboticArm();
-```
-
-    Podemos tambem passar os canais desejados para o construtor,
-    caso seja necessário.
-
-    Teremos então quatro motores a nossa disposição,
-    com funções para cada um :
-
-```c++ roboticArm.setRotation(<angle>);
-roboticArm.setElevation(<angle>);
-roboticArm.setApproximation(<angle>);
-roboticArm.setGrip(<angle>);
+```c++ 
+robotic_arm.setRotation(<angle>);
+robotic_arm.setElevation(<angle>);
+robotic_arm.setApproximation(<angle>);
+robotic_arm.openClaw();
 ```

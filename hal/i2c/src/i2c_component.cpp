@@ -16,14 +16,8 @@ robarm::hal::i2c::I2C_Component::I2C_Component(I2C_Bus bus,
                                                uint8_t peripheral_address)
     : LinuxDevice(kI2cPath + std::to_string(static_cast<uint32_t>(bus))),
       bus_(bus),
-      peripheral_address_(peripheral_address) {}
-
-robarm::hal::i2c::I2C_Bus robarm::hal::i2c::I2C_Component::getBus() const {
-  return bus_;
-}
-
-uint8_t robarm::hal::i2c::I2C_Component::getPeripheralAddress() const {
-  return peripheral_address_;
+      peripheral_address_(peripheral_address) {
+  I2C_Peripheral i2c_peripheral_test(getPath(), peripheral_address);
 }
 
 void robarm::hal::i2c::I2C_Component::writeByte(uint8_t register_address,
@@ -33,28 +27,23 @@ void robarm::hal::i2c::I2C_Component::writeByte(uint8_t register_address,
 }
 
 void robarm::hal::i2c::I2C_Component::writeBit(uint8_t register_address,
-                                               uint8_t data, uint8_t bit_num) {
-  uint8_t b = readByte(register_address);
-  b = (data != 0) ? (b | (1 << bit_num)) : (b & ~(1 << bit_num));
-  writeByte(register_address, b);
+                                               uint8_t bit_value,
+                                               uint8_t bit_number) {
+  uint8_t register_value = readByte(register_address);
+  register_value = (bit_value) ? (register_value | (1 << bit_number))
+                               : (register_value & ~(1 << bit_number));
+  writeByte(register_address, register_value);
 }
 
-void robarm::hal::i2c::I2C_Component::writeBits(uint8_t register_address,
-                                                uint8_t data, uint8_t length,
-                                                uint8_t start_bit) {
-  int8_t b = readByte(register_address);
-  uint8_t bits = 1;
-  uint8_t i = 0;
-
-  while (i < length - 1) {
-    bits = (bits << 1);
-    ++bits;
-    ++i;
-  }
-
-  b &= ~(bits << start_bit);
-  b |= (data << start_bit);
-  writeByte(register_address, b);
+void robarm::hal::i2c::I2C_Component::writeBitField(uint8_t register_address,
+                                                    uint8_t bitfield_value,
+                                                    uint8_t length,
+                                                    uint8_t start_bit) {
+  int8_t register_value = readByte(register_address);
+  uint8_t bit_mask = ((1U << length) - 1);
+  register_value &= ~(bit_mask << start_bit);
+  register_value |= (bitfield_value << start_bit);
+  writeByte(register_address, register_value);
 }
 
 void robarm::hal::i2c::I2C_Component::readBlock(uint8_t register_address,
@@ -64,34 +53,26 @@ void robarm::hal::i2c::I2C_Component::readBlock(uint8_t register_address,
 }
 
 uint8_t robarm::hal::i2c::I2C_Component::readBit(uint8_t register_address,
-                                                 uint8_t bit_num) {
-  uint8_t b = readByte(register_address);
-  return (b >> bit_num) & 0x01;
+                                                 uint8_t bit_number) {
+  uint8_t data = readByte(register_address);
+  return (data >> bit_number) & 1;
 }
 
-uint8_t robarm::hal::i2c::I2C_Component::readBits(uint8_t register_address,
-                                                  uint8_t length,
-                                                  uint8_t start_bit) {
-  int8_t temp = readByte(register_address);
-  if ((length + start_bit) > 8) {
-    // [TODO] Find a better way to deal with this.
-    // std::cout << "Error: readBitsI2C cannot read more than 8 bits" <<
-    // std::endl;
-    exit(1);
-  } else if (length == 8) {
-    return temp;
-  }
-  return (temp >> start_bit) & 0xFF;
+uint8_t robarm::hal::i2c::I2C_Component::readBitField(uint8_t register_address,
+                                                      uint8_t length,
+                                                      uint8_t start_bit) {
+  uint8_t data = readByte(register_address);
+  return (data >> start_bit) & ((1U << length) - 1);
 }
 
 uint8_t robarm::hal::i2c::I2C_Component::readByte(uint8_t register_address) {
-  uint8_t data;
-  readBlock(register_address, &data, sizeof(data));
-  return data;
+  uint8_t buffer;
+  readBlock(register_address, &buffer, sizeof(buffer));
+  return buffer;
 }
 
 uint16_t robarm::hal::i2c::I2C_Component::readWord(uint8_t register_address) {
-  uint8_t data[2];
-  readBlock(register_address, data, sizeof(data));
-  return (data[0] << 8) | data[1];
+  uint8_t buffer[2];
+  readBlock(register_address, buffer, sizeof(buffer));
+  return (buffer[0] << 8) | buffer[1];
 }

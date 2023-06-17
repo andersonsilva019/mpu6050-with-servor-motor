@@ -25,7 +25,7 @@ robarm::hal::i2c::I2C_Peripheral::I2C_Peripheral(std::string const& i2c_path,
   }
 }
 
-robarm::hal::i2c::I2C_Peripheral::~I2C_Peripheral() {
+robarm::hal::i2c::I2C_Peripheral::~I2C_Peripheral() noexcept {
   close(i2c_file_descriptor_);
 }
 
@@ -44,7 +44,7 @@ void robarm::hal::i2c::I2C_Peripheral::writeRegister(uint8_t register_address,
 
 void robarm::hal::i2c::I2C_Peripheral::readRegister(uint8_t register_address,
                                                     uint8_t* data,
-                                                    uint32_t lenght) {
+                                                    uint32_t length) {
   uint8_t output_buffer[1];
   output_buffer[0] = register_address;
   uint32_t write_result =
@@ -53,8 +53,8 @@ void robarm::hal::i2c::I2C_Peripheral::readRegister(uint8_t register_address,
     throw I2C_PeripheralException(peripheral_address_,
                                   I2C_PeripheralError::kWrite);
   }
-  uint32_t read_result = read(i2c_file_descriptor_, data, lenght);
-  if (read_result != lenght) {
+  uint32_t read_result = read(i2c_file_descriptor_, data, length);
+  if (read_result != length) {
     throw I2C_PeripheralException(peripheral_address_,
                                   I2C_PeripheralError::kRead);
   }

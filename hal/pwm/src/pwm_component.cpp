@@ -44,7 +44,8 @@ void robarm::hal::pwm::PWM_Component::setDutyCycle(uint32_t duty_cycle) {
                                        std::to_string(duty_cycle).c_str());
 }
 
-void robarm::hal::pwm::PWM_Component::setDutyCyclePercentage(float percentage) {
+void robarm::hal::pwm::PWM_Component::setDutyCyclePercentage(
+    double percentage) {
   if (percentage < 0.01F && percentage > 1.0F) {
     return;
   }
@@ -52,34 +53,35 @@ void robarm::hal::pwm::PWM_Component::setDutyCyclePercentage(float percentage) {
   setDutyCycle(duty_cycle);
 }
 
-std::string robarm::hal::pwm::PWM_Component::constructPath(PWM_ChannelId channel) const noexcept {
+std::string robarm::hal::pwm::PWM_Component::constructPath(
+    PWM_ChannelId channel) const noexcept {
   switch (channel) {
+    default:
     case PWM_ChannelId::kPwm1Channel_0: {
-      PWM_Info pwm_info(1, 1, 0, 9, 22);
+      PWM_Info pwm_info(1, 1, 0, BoardHeader::kHeaderP9, 22);
       return pwm_info.getDeviceFilePath();
     }
     case PWM_ChannelId::kPwm1Channel_1: {
-      PWM_Info pwm_info(1, 1, 1, 9, 21);
+      PWM_Info pwm_info(1, 1, 1, BoardHeader::kHeaderP9, 21);
       return pwm_info.getDeviceFilePath();
     }
     case PWM_ChannelId::kPwm4Channel_0: {
-      PWM_Info pwm_info(4, 4, 0, 9, 14);
+      PWM_Info pwm_info(4, 4, 0, BoardHeader::kHeaderP9, 14);
       return pwm_info.getDeviceFilePath();
     }
     case PWM_ChannelId::kPwm4Channel_1: {
-      PWM_Info pwm_info(4, 4, 1, 9, 16);
+      PWM_Info pwm_info(4, 4, 1, BoardHeader::kHeaderP9, 16);
       return pwm_info.getDeviceFilePath();
     }
     case PWM_ChannelId::kPwm7Channel_0: {
-      PWM_Info pwm_info(7, 7, 0, 8, 19);
+      PWM_Info pwm_info(7, 7, 0, BoardHeader::kHeaderP8, 19);
       return pwm_info.getDeviceFilePath();
     }
     case PWM_ChannelId::kPwm7Channel_1: {
-      PWM_Info pwm_info(7, 7, 1, 8, 13);
+      PWM_Info pwm_info(7, 7, 1, BoardHeader::kHeaderP8, 13);
       return pwm_info.getDeviceFilePath();
     }
   }
-  return "";  // [TODO] Could throw an exception here...
 }
 
 void robarm::hal::pwm::PWM_Component::setOutputStatus(bool output_status) {

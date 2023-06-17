@@ -15,9 +15,9 @@ namespace i2c {
 class I2C_Peripheral {
  public:
   I2C_Peripheral(std::string const& i2c_path, uint8_t peripheral_address);
-  ~I2C_Peripheral();
+  virtual ~I2C_Peripheral() noexcept;
   void writeRegister(uint8_t register_address, uint8_t data);
-  void readRegister(uint8_t register_address, uint8_t* data, uint32_t lenght);
+  void readRegister(uint8_t register_address, uint8_t* data, uint32_t length);
 
  private:
   const uint32_t i2c_file_descriptor_;

@@ -3,22 +3,22 @@
 
 #include "hal/i2c/include/i2c_peripheral_exception.hpp"
 
+#include "utils/common/include/common.hpp"
+
 constexpr char kI2C_PeripheralExceptionFormatAccess[] = "access";
 constexpr char kI2C_PeripheralExceptionFormatRead[] = "read from";
 constexpr char kI2C_PeripheralExceptionFormatWrite[] = "write to";
 constexpr char kI2C_PeripheralExceptionFormatString[] =
     "Could not %s the I2C peripheral in address %02X.";
 
-#include "utils/common/include/common.hpp"
-
 robarm::hal::i2c::I2C_PeripheralException::I2C_PeripheralException(
-    uint8_t peripheral_address, I2C_PeripheralError error)
-    : message_(parseErrorMessage(peripheral_address, error)) {}
+    uint8_t peripheral_address, I2C_PeripheralError error) noexcept
+    : peripheral_address_(peripheral_address), error_(error) {}
 
-std::string robarm::hal::i2c::I2C_PeripheralException::parseErrorMessage(
-    uint8_t peripheral_address, I2C_PeripheralError error) {
+std::string robarm::hal::i2c::I2C_PeripheralException::parseErrorMessage()
+    const noexcept {
   const char* error_string = nullptr;
-  switch (error) {
+  switch (error_) {
     default:
     case I2C_PeripheralError::kAccess:
       error_string = kI2C_PeripheralExceptionFormatAccess;
@@ -31,5 +31,5 @@ std::string robarm::hal::i2c::I2C_PeripheralException::parseErrorMessage(
       break;
   }
   return utils::common::format(kI2C_PeripheralExceptionFormatString,
-                               error_string, peripheral_address);
+                               error_string, peripheral_address_);
 }

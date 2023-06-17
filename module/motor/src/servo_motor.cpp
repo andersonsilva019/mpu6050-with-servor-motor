@@ -28,8 +28,8 @@ void robarm::module::motor::ServoMotor::setAngle(double angle) {
   setDutyCycle(parseAngle(angle));
 }
 
-uint32_t robarm::module::motor::ServoMotor::parseAngle(double angle) {
-  return utils::common::map(angle, kServoMotorMinDegree,
-                            kServoMotorMaxDegree, kServoMotorMinDutyCycle,
-                            kServoMotorMaxDutyCycle);
+uint32_t robarm::module::motor::ServoMotor::parseAngle(
+    double angle) const noexcept {
+  return utils::common::map(angle, kServoMotorMinDegree, kServoMotorMaxDegree,
+                            kServoMotorMinDutyCycle, kServoMotorMaxDutyCycle);
 }

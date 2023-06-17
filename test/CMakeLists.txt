@@ -22,5 +22,4 @@ target_link_libraries(${robarm_executable} LINK_PUBLIC
     robarm_module_button
     robarm_module_motor
     robarm_module_accelerometer
-    robarm_hal_i2c
 )

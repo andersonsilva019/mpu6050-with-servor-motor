@@ -11,21 +11,24 @@ namespace robarm {
 namespace hal {
 namespace pwm {
 
+enum class BoardHeader : uint32_t { kHeaderP8 = 8, kHeaderP9 = 9 };
+
 struct PWM_Info {
  public:
-  PWM_Info(uint32_t chip, uint32_t device, uint32_t channel, uint32_t header,
-           uint32_t pin);
+  PWM_Info(uint32_t chip, uint32_t device, uint32_t channel, BoardHeader header,
+           uint32_t pin) noexcept;
+  virtual ~PWM_Info() = default;
   std::string getDeviceFilePath() const noexcept;
 
  private:
   void configPinAsPwm() const noexcept;
 
  public:
-  const uint32_t chip_ = 0;
-  const uint32_t device_ = 0;
-  const uint32_t channel_ = 0;
-  const uint32_t header_ = 0;
-  const uint32_t pin_ = 0;
+  const uint32_t chip_;
+  const uint32_t device_;
+  const uint32_t channel_;
+  const BoardHeader header_;
+  const uint32_t pin_;
 };
 
 }  // namespace pwm

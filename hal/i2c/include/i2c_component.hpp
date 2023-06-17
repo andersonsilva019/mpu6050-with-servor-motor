@@ -17,16 +17,18 @@ enum class I2C_Bus : uint32_t { kBus0, kBus1, kBus2 };
 class I2C_Component : protected device::LinuxDevice {
  public:
   I2C_Component(I2C_Bus bus, uint8_t peripheral_address);
-  ~I2C_Component() = default;
-  I2C_Bus getBus() const;
-  uint8_t getPeripheralAddress() const;
+  virtual ~I2C_Component() = default;
+  I2C_Bus getBus() const noexcept { return bus_; }
+  uint8_t getPeripheralAddress() const noexcept { return peripheral_address_; }
   void writeByte(uint8_t register_address, uint8_t data);
-  void writeBit(uint8_t register_address, uint8_t data, uint8_t bit_number);
-  void writeBits(uint8_t register_address, uint8_t data, uint8_t length,
-                 uint8_t start_bit);
+  void writeBit(uint8_t register_address, uint8_t bit_value,
+                uint8_t bit_number);
+  void writeBitField(uint8_t register_address, uint8_t bitfield_value,
+                     uint8_t length, uint8_t start_bit);
   void readBlock(uint8_t register_address, uint8_t* data, uint8_t length);
   uint8_t readBit(uint8_t register_address, uint8_t bit_number);
-  uint8_t readBits(uint8_t register_address, uint8_t length, uint8_t start_bit);
+  uint8_t readBitField(uint8_t register_address, uint8_t length,
+                       uint8_t start_bit);
   uint8_t readByte(uint8_t register_address);
   std::uint16_t readWord(uint8_t register_address);
 

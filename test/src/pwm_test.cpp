@@ -22,8 +22,12 @@ int main() {
   } catch (robarm::hal::device::LinuxDeviceException const& e) {
     std::cout << e.what() << "\n";
     return 0;
+  } catch (std::exception const& e) {
+    std::cout << e.what() << "\n";
+    return 1;
   }
-  float angle = 0.0;
+
+  double angle = 0.0;
   bool ascending_count = true;
   while (true) {
     try {
@@ -43,7 +47,9 @@ int main() {
     } catch (robarm::hal::device::LinuxDeviceException const& e) {
       std::cout << e.what() << "\n";
       return 0;
+    } catch (std::exception const& e) {
+      std::cout << e.what() << "\n";
+      return 1;
     }
   }
- while(true);
 }

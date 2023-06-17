@@ -7,12 +7,8 @@
 #include <iostream>
 #include <string>
 
-inline void LOG(std::string const& message) {
-    LOG(message.c_str());
-}
+void LOG(std::string const& message) noexcept { LOG(message.c_str()); }
 
-inline void LOG(char const* message) {
-    std::cout << message << "\n";
-}
+void LOG(char const* message) noexcept { std::cout << message << "\n"; }
 
 #endif  // UTILS_LOGGER_INCLUDE_LOGGER_HPP_

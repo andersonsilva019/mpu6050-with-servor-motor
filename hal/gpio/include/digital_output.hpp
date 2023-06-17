@@ -23,7 +23,10 @@ class DigitalOutput : protected GPIO_Component {
     level_ = level;
     GPIO_Component::setLevel(level);
   }
-  DigitalLevel toggleLevel();
+  DigitalLevel toggleLevel() {
+    setLevel(DigitalOutput::invertDigitalLevel(level_));
+    return level_;
+  }
 
  public:
   static DigitalLevel invertDigitalLevel(DigitalLevel digital_level) noexcept {

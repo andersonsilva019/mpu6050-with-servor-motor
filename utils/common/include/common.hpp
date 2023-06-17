@@ -11,11 +11,17 @@ namespace robarm {
 namespace utils {
 namespace common {
 
-uint32_t map(double value, double in_min, double in_max, uint32_t out_min,
-             uint32_t out_max) noexcept;
-
-double map(uint32_t value, uint32_t in_min, uint32_t in_max, double out_min,
-             double out_max) noexcept;
+template <typename FromType, typename ToType>
+ToType map(FromType value, FromType in_min, FromType in_max, ToType out_min,
+           ToType out_max) noexcept {
+  if (value < in_min) {
+    return out_min;
+  } else if (value > in_max) {
+    return out_max;
+  }
+  return static_cast<ToType>(
+      ((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min));
+}
 
 std::string format(const char* fmt, ...) noexcept;
 
